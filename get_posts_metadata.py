@@ -1,9 +1,8 @@
 import requests
 from datetime import datetime, timedelta
 from typing import List, Set
+from pydantic import BaseModel
 
-current_date = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
-previous_date = current_date - timedelta(days=1)
 
 class Posts:
     def __init__(self, url):
@@ -24,6 +23,9 @@ class Posts:
 
     def get_latest_posts(self):
         posts_api_url = f"{self.api_url}/posts"
+        
+        current_date = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+        previous_date = current_date - timedelta(days=1)
         params = {
             "per_page": 15,
             "status": "publish",
@@ -56,4 +58,38 @@ def get_valid_posts(api_url: str) -> List:
             posts_list.remove(post)
             
     return posts_list[:5]
-        
+
+
+class PostData(BaseModel):
+    title: str
+    link: str
+    cover: str
+
+
+def _get_post_cover(api_url):
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        result = response.json()
+        return result["link"]
+    else:
+        raise Exception(response.text, response.status_code)
+    
+
+def get_post_data(url, post) -> PostData:
+    media_id = post["featured_media"]
+    media_api_url = f"{url}/media/{media_id}"
+    post_cover = _get_post_cover(media_api_url)
+    return PostData(
+        title = post["title"]["rendered"],
+        link = post["link"],
+        cover = post_cover
+    )
+
+
+def get_posts_metadata(api_url: str) -> List[PostData]:
+    posts = get_valid_posts(api_url)
+    posts_data = []  
+    for post in posts:
+        posts_data.append(get_post_data(api_url, post))
+    return posts_data    
+         
