@@ -3,8 +3,10 @@ from PIL import Image, ImageDraw, ImageFont
 from typing import List
 from pydantic import BaseModel
 from pathlib import Path
+import requests
 
 import os
+import urllib.request
 
 class Canvas(BaseModel):
     width: int
@@ -23,8 +25,10 @@ def create_canvas(canvas) -> Image:
     
     
 class ImageElements(BaseModel):
+    number: int
+    canvas_size: Canvas
     logo: Path
-    background: Path
+    background: str
     text_box: object
     text: str
     
@@ -35,7 +39,7 @@ def _merge_elements(image, element, position):
     
 
 def merge_elements(elements: ImageElements, canvas: Image):
-    background = Image.open(elements.background).convert("RGBA")    
+    background = get_background_from_url(elements.background)   
     logo = Image.open(elements.logo)
     
     logo_pos_y = 1100
@@ -49,7 +53,13 @@ def merge_elements(elements: ImageElements, canvas: Image):
     _merge_elements(canvas, logo, (horizontal_center(canvas, logo), logo_pos_y))
     add_text(canvas, elements.text)
     
-    canvas.save("result.png", format="png")
+    canvas.save(f"stories/{elements.number}.png", format="png")
+
+
+def get_background_from_url(url):
+    # suffix = os.path.splitext(url)[0]
+    response = requests.get(url, stream=True)
+    return Image.open(response.raw).convert("RGBA")
 
 
 def add_text(image, text):
@@ -111,15 +121,7 @@ def draw_text_box() -> Image:
     return text_box
 
 
-# merge_elements(image_elements)
-canvas = create_canvas(Canvas(width=1080, height=1920))
-
-image_elements = ImageElements(
-    logo = Path("media", "logo.png"),
-    background = Path("media", "background.jpg"),
-    text_box=draw_text_box(),
-    text = "HBO v novembri: Dočkáš sa hereckých hviezd v novinkách, ktorým nebude chýbať napätie a dráma",
-)
-
-
-merge_elements(image_elements, canvas)
+def create_story(post_elements):
+    # for post in posts_elements:
+    canvas = create_canvas(post_elements.canvas_size)
+    merge_elements(post_elements, canvas)
