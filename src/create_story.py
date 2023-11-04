@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from pathlib import Path
 
 import os
-import re
 
 class Canvas(BaseModel):
     width: int
@@ -54,14 +53,18 @@ def merge_elements(elements: ImageElements, canvas: Image):
 
 
 def add_text(image, text):
+    text_position = 1370
+    font_size = 53
     text = split_text(text)
-    font = ImageFont.truetype("media/fonts/Montserrat-Bold.ttf", 60)
+    font = ImageFont.truetype("media/fonts/Montserrat-ExtraBold.ttf", font_size)
     draw = ImageDraw.Draw(image)
-    draw.text((image.width // 2, 1400), text, font=font, align="center", fill="black", anchor="mm")
+    for line in text:
+        draw.text((image.width // 2, text_position), line, font=font, align="center", fill="black", anchor="mm")
+        text_position += font_size * 1.3
 
 
 def split_text(text:str) -> List:
-    max_char = 30
+    max_char = 29
     
     if len(text) <= max_char:
         return [text]
@@ -115,7 +118,7 @@ image_elements = ImageElements(
     logo = Path("media", "logo.png"),
     background = Path("media", "background.jpg"),
     text_box=draw_text_box(),
-    text = "Looreeem ipsummm. Ipsum lorem dolor sit amed. Mauris eros tellus auctor",
+    text = "HBO v novembri: Dočkáš sa hereckých hviezd v novinkách, ktorým nebude chýbať napätie a dráma",
 )
 
 
