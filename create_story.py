@@ -1,8 +1,11 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
+from typing import List
 from pydantic import BaseModel
 from pathlib import Path
+
 import os
+import re
 
 class Canvas(BaseModel):
     width: int
@@ -24,6 +27,7 @@ class ImageElements(BaseModel):
     logo: Path
     background: Path
     text_box: object
+    text: str
     
 
 def _merge_elements(image, element, position):    
@@ -44,9 +48,39 @@ def merge_elements(elements: ImageElements, canvas: Image):
     _merge_elements(canvas, background, (horizontal_center(canvas, background), 0))
     _merge_elements(canvas, elements.text_box, (horizontal_center(canvas, elements.text_box), text_box_pos_y))
     _merge_elements(canvas, logo, (horizontal_center(canvas, logo), logo_pos_y))
+    add_text(canvas, elements.text)
     
     canvas.save("result.png", format="png")
 
+
+def add_text(image, text):
+    text = split_text(text)
+    font = ImageFont.truetype("media/fonts/Montserrat-Bold.ttf", 60)
+    draw = ImageDraw.Draw(image)
+    draw.text((image.width // 2, 1400), text, font=font, align="center", fill="black", anchor="mm")
+
+
+def split_text(text:str) -> List:
+    max_char = 30
+    
+    if len(text) <= max_char:
+        return [text]
+     
+    text_list = []
+    remaining_text = text
+    
+    while remaining_text:        
+        char = ""
+        cur_char = max_char
+        while char != " " and len(remaining_text) >= cur_char:
+            char = remaining_text[cur_char-1]
+            cur_char -= 1
+        
+        text_list.append(remaining_text[:cur_char].strip())
+        remaining_text = remaining_text[cur_char:].strip()
+            
+    return text_list
+         
 
 def horizontal_center(el_a: Image, el_b: Image) -> int:
     return -(el_b.width//2)+(el_a.width//2)
@@ -69,7 +103,7 @@ def draw_text_box() -> Image:
     size = (980, 940)
     text_box = Image.new("RGBA", size)
     draw = ImageDraw.Draw(text_box)
-    draw.rounded_rectangle(((0, 0), size), 30, fill=(255,255,255,196))
+    draw.rounded_rectangle(((0, 0), size), 20, fill=(255,255,255,220))
     
     return text_box
 
@@ -80,7 +114,8 @@ canvas = create_canvas(Canvas(width=1080, height=1920))
 image_elements = ImageElements(
     logo = Path("media", "logo.png"),
     background = Path("media", "background.jpg"),
-    text_box=draw_text_box()
+    text_box=draw_text_box(),
+    text = "Looreeem ipsummm. Ipsum lorem dolor sit amed. Mauris eros tellus auctor",
 )
 
 
