@@ -1,16 +1,41 @@
 from PIL import Image, ImageDraw, ImageFont
 
-from typing import List
+from typing import List, Dict, Optional
 from pydantic import BaseModel
 from pathlib import Path
 import requests
 
 import os
-import urllib.request
+
+
+class Text(BaseModel):
+    text: str
+    font: Optional[str]
+    font_size: Optional[int]
+    align: Optional[str]
+    color: Optional[str | int]
+    y_axis: int
+    line_height: Optional[float]
+    word_wrap: Optional[int]
+    
+    
+class Background(BaseModel):
+    path: str
+    position: List[str | int]
+    
 
 class Canvas(BaseModel):
     width: int
     height: int
+
+
+class ImageElements(BaseModel):
+    number: int
+    canvas_size: Canvas
+    background: Background
+    images: Optional[List]
+    shapes: Optional[List]
+    text: Text
 
 
 def create_canvas(canvas) -> Image:
@@ -23,54 +48,49 @@ def create_canvas(canvas) -> Image:
     
     return blank_canvas
     
-    
-class ImageElements(BaseModel):
-    number: int
-    canvas_size: Canvas
-    logo: Path
-    background: str
-    text_box: object
-    text: str
-    
 
-def _merge_elements(image, element, position):    
-    image.paste(element, position, element)
-    # return image
+def _merge_elements(image, element, position):
+    if position[0] == "center":
+        position[0] = horizontal_center(image, element)
+    image.paste(element, tuple(position), element)
     
 
 def merge_elements(elements: ImageElements, canvas: Image):
-    background = get_background_from_url(elements.background)   
-    logo = Image.open(elements.logo)
-    
-    logo_pos_y = 1100
-    text_box_pos_y = 1194
-    
-    logo = logo.resize((150, 150))
+    background = get_background_from_url(elements.background.path)
     background = resize_background(background, canvas)
-    
     _merge_elements(canvas, background, (horizontal_center(canvas, background), 0))
-    _merge_elements(canvas, elements.text_box, (horizontal_center(canvas, elements.text_box), text_box_pos_y))
-    _merge_elements(canvas, logo, (horizontal_center(canvas, logo), logo_pos_y))
+    
+    for element in elements.shapes:
+        shape = draw_shape(element)
+        _merge_elements(canvas, shape, element["position"])
+    
+    for element in elements.images:
+        image = Image.open(element["path"])
+        if "size" in element.keys() and image.size != element["size"]:
+            image = image.resize(tuple(element["size"]))
+        _merge_elements(canvas, image, element["position"])
+        
     add_text(canvas, elements.text)
     
     canvas.save(f"stories/{elements.number}.png", format="png")
 
 
 def get_background_from_url(url):
-    # suffix = os.path.splitext(url)[0]
     response = requests.get(url, stream=True)
     return Image.open(response.raw).convert("RGBA")
 
 
 def add_text(image, text):
-    text_position = 1370
-    font_size = 53
-    text = split_text(text)
-    font = ImageFont.truetype("media/fonts/Montserrat-ExtraBold.ttf", font_size)
+    text_position = text.y_axis
+    font_size = text.font_size
+    message = split_text(text.text)
+    font = ImageFont.truetype(text.font, text.font_size)
+    align = text.align
+    fill = text.color
     draw = ImageDraw.Draw(image)
-    for line in text:
-        draw.text((image.width // 2, text_position), line, font=font, align="center", fill="black", anchor="mm")
-        text_position += font_size * 1.3
+    for line in message:
+        draw.text((image.width // 2, text_position), line, font=font, align=align, fill=fill, anchor="mm")
+        text_position += font_size * text.line_height
 
 
 def split_text(text:str) -> List:
@@ -112,16 +132,18 @@ def open_image(element):
         return Image.open(element)
 
 
-def draw_text_box() -> Image:
-    size = (980, 940)
-    text_box = Image.new("RGBA", size)
-    draw = ImageDraw.Draw(text_box)
-    draw.rounded_rectangle(((0, 0), size), 20, fill=(255,255,255,220))
+def draw_shape(details) -> Image:
+    size = tuple(details["size"])
+    shape = Image.new("RGBA", size)
+    draw = ImageDraw.Draw(shape)
+    if details["type"] == "rounded_rectangle":
+        radius = details["corner_radius"]
+        fill = tuple(details["fill"])
+        draw.rounded_rectangle(((0, 0), size), radius, fill=fill)
     
-    return text_box
+    return shape
 
 
 def create_story(post_elements):
-    # for post in posts_elements:
     canvas = create_canvas(post_elements.canvas_size)
     merge_elements(post_elements, canvas)
