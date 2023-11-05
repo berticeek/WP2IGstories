@@ -3,3 +3,5 @@
 !media/*/logo.png
 .DS_Store
 stories/
+.vscode
+__pycache__

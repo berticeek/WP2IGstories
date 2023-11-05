@@ -1,6 +1,6 @@
 from pathlib import Path
 import yaml
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 import os
 from argparse import ArgumentParser
 
@@ -15,46 +15,78 @@ from pydantic import BaseModel
 class Template(BaseModel):
     canvas: Dict
     elements: Dict
-    bg_pos: Tuple
-    text_config: Dict
+    background: Dict
+    texts_config: Optional[List]
     
 
 def get_post_elements(number, post, template):
-    # for number, post in enumerate(posts):
     canvas_size = Canvas(width=template.canvas["width"], height=template.canvas["height"])
+    
+    if template.background["from_cover"]:
+        bg_path = post.cover
+    else:
+        bg_path = template.background["path"]
+    
+    for im_id, image in enumerate(template.elements["images"]):
+        if image["from_cover"]:
+            template.elements["images"][im_id].update({"path": post.cover})
+            
+    if "shapes" in template.elements:
+        shapes=template.elements["shapes"]
+    else:
+        shapes=None
+        
+    texts = []   
+    for text_conf in template.texts_config:
+        if "text" in text_conf:
+            text = text_conf["text"]
+        else:
+            text = post.title
+        texts.append(Text(
+            text=text,
+            font=text_conf["font"],
+            font_size=text_conf["font_size"],
+            align=text_conf["align"],
+            color=text_conf["color"],
+            y_axis=text_conf["y_axis"],
+            x_axis=text_conf["x_axis"],
+            line_height=text_conf["line_height"],
+            word_wrap=text_conf["word_wrap"],
+            anchor=text_conf["anchor"]
+            ))
     
     return (
         ImageElements(
             number=number,
             canvas_size=canvas_size,
             background=Background(
-                path = post.cover,
-                position = template.bg_pos,
+                path = bg_path,
+                position = template.background["position"],
+                size = template.background["size"],
+                from_cover=template.background["from_cover"]
             ),
             images=template.elements["images"],
-            shapes=template.elements["shapes"],
-            text=Text(
-                text=post.title,
-                font=template.text_config["font"],
-                font_size=template.text_config["font_size"],
-                align=template.text_config["align"],
-                color=template.text_config["color"],
-                y_axis=template.text_config["y_axis"],
-                line_height=template.text_config["line_height"],
-                word_wrap=template.text_config["word_wrap"],       
-            )
+            shapes=shapes,
+            texts=texts,
         ))
 
 
 def create_stories(posts, site):
     template_path = os.path.join("data", site, "template.yaml")
+    
     with open(template_path) as template:
         template_content = yaml.safe_load(template)
+        
+        if "texts" in template_content["elements"]:
+            texts_config = template_content["elements"]["texts"]
+        else: 
+            text_config = None
+        
         story_template = Template(
             canvas = template_content["canvas"],
             elements = template_content["elements"],
-            bg_pos = template_content["elements"]["background"]["position"],
-            text_config = template_content["elements"]["text"],
+            background = template_content["elements"]["background"],
+            texts_config = texts_config,
         )
     
     for number, post in enumerate(posts):
@@ -81,7 +113,8 @@ if __name__ == "__main__":
     
     site = args.site
     
-    api_url = "https://hashtag.zoznam.sk/wp-json/wp/v2"
+    # api_url = "https://hashtag.zoznam.sk/wp-json/wp/v2"
+    api_url = "https://plnielanu.zoznam.sk/wp-json/wp/v2"
     posts = get_posts_metadata(api_url)
     create_stories(posts, site)
     
