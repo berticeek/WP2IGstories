@@ -71,6 +71,18 @@ def get_post_elements(number, post, template):
         ))
 
 
+def write_metadata_file(site, post, elements):
+    texts = [x.text for x in elements.texts]
+    metadata = [{
+        "number": elements.number,
+        "url": f"{post.link}",
+        "image": f"{elements.background.path}",
+        "texts": texts,
+    }]
+    with open(os.path.join("stories", site, "metadata.yaml"), "a", encoding="utf-8") as f_metadata:
+        yaml.dump(metadata, f_metadata, default_flow_style=False, allow_unicode=True, sort_keys=False)
+
+
 def create_stories(posts, site):
     template_path = os.path.join("data", site, "template.yaml")
     
@@ -93,11 +105,14 @@ def create_stories(posts, site):
         post_elements = get_post_elements(number, post, story_template)
         create_story(post_elements, site)
         
-        links_folder = os.path.join("stories", site)
-        if not os.path.isdir(links_folder):
-            os.mkdir(links_folder)
-        with open(os.path.join(links_folder, "links.txt"), "a") as links:
+        output_folder = os.path.join("stories", site)
+        if not os.path.isdir(output_folder):
+            os.mkdir(output_folder)
+        with open(os.path.join(output_folder, "links.txt"), "a") as links:
             links.write(f"{number}: {post.link}\n")
+            
+        write_metadata_file(site, post, post_elements)
+            
         
 
 if __name__ == "__main__":

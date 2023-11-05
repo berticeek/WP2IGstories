@@ -23,7 +23,7 @@
       - "center"
       - 0
     texts:
-    - text: "ZMEŇ|NÁDPIS:"
+    - text: "ZMEŇ\nNÁDPIS:"
       font: "media/pe/fonts/Raleway-Black.ttf"
       font_size: 94
       align: "left"

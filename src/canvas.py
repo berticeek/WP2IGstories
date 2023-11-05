@@ -123,7 +123,7 @@ def _add_text(image, text):
 
 def split_text(text:str, max_char) -> List:
     if len(text) <= max_char:
-        return text.split("|")
+        return text.rstrip().split("\n")
      
     text_list = []
     remaining_text = text.rstrip()
