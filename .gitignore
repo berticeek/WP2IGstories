@@ -1,5 +1,5 @@
 *.jpg
 *.png
-!media/logo.png
+!media/*/logo.png
 .DS_Store
 stories/

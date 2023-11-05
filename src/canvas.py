@@ -72,7 +72,7 @@ def merge_elements(elements: ImageElements, canvas: Image):
         
     add_text(canvas, elements.text)
     
-    canvas.save(f"stories/{elements.number}.png", format="png")
+    return canvas
 
 
 def get_background_from_url(url):
@@ -144,6 +144,10 @@ def draw_shape(details) -> Image:
     return shape
 
 
-def create_story(post_elements):
+def create_story(post_elements, site):
     canvas = create_canvas(post_elements.canvas_size)
-    merge_elements(post_elements, canvas)
+    story = merge_elements(post_elements, canvas)
+    stories_site_dir = os.path.join("stories", site)
+    if not os.path.isdir(stories_site_dir):
+        os.mkdir(stories_site_dir)
+    story.save(f"{stories_site_dir}/{post_elements.number}.png", format="png")

@@ -1,0 +1,45 @@
+---
+  canvas:
+    height: 1920
+    width: 1080
+
+  elements:
+    background:
+      position:
+      - "center"
+      - 0
+    images:
+    - image: "logo"
+      path: "media/ht/logo.png"
+      size:
+      - 150
+      - 150
+      position:
+      - "center"
+      - 1100
+    shapes:
+    - shape: "text_box"
+      size:
+      - 980
+      - 940
+      type: "rounded_rectangle"
+      corner_radius: 20
+      fill:
+      - 255
+      - 255
+      - 255
+      - 220
+      position:
+      - "center"
+      - 1194
+    text:
+      font: "media/ht/fonts/Montserrat-ExtraBold.ttf"
+      font_size: 53
+      align: "center"
+      color: "black"
+      y_axis: 1370
+      line_height: 1.3
+      word_wrap: 29
+
+
+      
