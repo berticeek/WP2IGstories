@@ -101,10 +101,10 @@ def store_metadata(post, elements):
         "number": elements.number,
         "url": f"{post.link}",
         "image": f"{elements.background.path}",
+        "image_position_x":f"{elements.background.position[0]}",
         "texts": texts,
+        
     }
-    # with open(os.path.join("stories", site, "metadata.yaml"), "a", encoding="utf-8") as f_metadata:
-    #     yaml.dump(metadata, f_metadata, default_flow_style=False, allow_unicode=True, sort_keys=False)
 
 
 def write_metadata_file(metadata):
@@ -125,6 +125,8 @@ def adjust_elements(elements: ImageElements, site: str) -> ImageElements:
         metavalues = yaml.safe_load(metadata)[elements.number]
     for text_id, text in enumerate(metavalues["texts"]):
         elements.texts[text_id].text = text
+    
+    elements.background.position[0] = metavalues["image_position_x"]
         
     return elements
         

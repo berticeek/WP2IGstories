@@ -82,7 +82,14 @@ def _merge_images(elements, canvas):
 def merge_elements(elements: ImageElements, canvas: Image):
     background = open_image(elements.background.path)
     background = resize_background(background, elements.background.size)
-    _merge_elements(canvas, background, (horizontal_center(canvas, background), elements.background.position[1]))
+    
+    if elements.background.position[0] == "center":
+        elements.background.position[0] = horizontal_center(canvas, background)
+        
+    x_axis = int(elements.background.position[0])
+    y_axis = int(elements.background.position[1])
+    
+    _merge_elements(canvas, background, (x_axis, y_axis))
     _merge_shapes(elements, canvas)
     _merge_images(elements, canvas)
     for text in elements.texts:   
