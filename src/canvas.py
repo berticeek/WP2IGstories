@@ -122,7 +122,7 @@ def _add_text(image, text):
 
 
 def split_text(text:str, max_char) -> List:
-    if len(text) <= max_char:
+    if len(text) <= max_char or "\n" in text:
         return text.rstrip().split("\n")
      
     text_list = []
@@ -131,12 +131,15 @@ def split_text(text:str, max_char) -> List:
     while remaining_text:        
         char = ""
         cur_char = max_char
-        while char != " " and len(remaining_text) >= cur_char:
+        while char != " " and len(remaining_text) >= cur_char and cur_char>0:
             char = remaining_text[cur_char-1]
             cur_char -= 1
         
         text_list.append(remaining_text[:cur_char].strip())
         remaining_text = remaining_text[cur_char:].strip()
+    
+    if not text_list:
+        text_list = text.rstrip().split("\n")
             
     return text_list
          
