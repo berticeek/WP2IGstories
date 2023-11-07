@@ -40,7 +40,8 @@ def get_story_template() -> Template:
 def clear_files(site) -> None:
     output_folder = os.path.join("stories", site)
     for file in os.listdir(output_folder):
-        os.remove(os.path.join(output_folder, file))
+        if file != "metadata.yaml":
+            os.remove(os.path.join(output_folder, file))
 
 
 def get_post_elements(number: int, post, template) -> ImageElements:
@@ -148,8 +149,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     site = args.site
-    if not args.recreate:
-        clear_files(site)
+    clear_files(site)
     api_url = "https://hashtag.zoznam.sk/wp-json/wp/v2"
     # api_url = "https://plnielanu.zoznam.sk/wp-json/wp/v2"
     posts = get_posts_metadata(api_url)
