@@ -7,6 +7,8 @@ from argparse import ArgumentParser
 from get_posts_metadata import get_posts_metadata
 from get_posts_metadata import PostData
 
+from file_paths import template_path, clear_files
+
 from canvas import Canvas, ImageElements, Background, Text
 from canvas import create_story
 
@@ -19,15 +21,6 @@ class Template(BaseModel):
     background: Dict
     texts_config: Optional[List]
 
-
-def template_path(site: str) -> str:
-    return os.path.join("data", site, "template.yaml")
-
-
-def get_api_url(site: str) -> str:
-    with open(template_path(site)) as template:
-        template = yaml.safe_load(template)
-    return template["url"]
 
 def get_story_template(site: str) -> Template:
     with open(template_path(site)) as template:
@@ -44,13 +37,6 @@ def get_story_template(site: str) -> Template:
             background = template["elements"]["background"],
             texts_config = texts_config,
         )
-    
-    
-def clear_files(site: str) -> None:
-    output_folder = os.path.join("stories", site)
-    for file in os.listdir(output_folder):
-        if file != "metadata.yaml":
-            os.remove(os.path.join(output_folder, file))
 
 
 def get_post_elements(number: int, post, template) -> ImageElements:
@@ -160,7 +146,7 @@ if __name__ == "__main__":
     site = args.site
     clear_files(site)
 
-    posts = get_posts_metadata(get_api_url(site))
+    posts = get_posts_metadata(site)
     
     story_template = get_story_template(site)
     metadata = []    
