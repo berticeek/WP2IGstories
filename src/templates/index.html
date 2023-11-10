@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang = "en">
+   <head>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+      <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>   
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+      <link rel="stylesheet" href="../static/style.css">
+   </head>
+   <body>
+        <div id="container">
+            <h1>Storkoprístroj 3000</h1>
+
+            <form>
+                    <label for="site">Vyber si stránku:</label>
+                    <select id="site" name="site">
+                        <option value="ht">Hashtag</option>
+                        <option value="pe">Plní Elánu</option>
+                    </select>
+                    <button id="create">Vytvor storky</button>
+            </form>
+        </div>
+        
+       <script>
+           $(document).ready(function(){
+               $("#create").click(function(){
+                    var site = $('#site').val();
+                   $.ajax({
+                       type: 'GET',
+                       url: '/create',
+                       data: { 'option': site },
+                       success: function(response) {
+                           console.log(response);
+                       }
+                   });
+               });
+           });
+       </script>
+   </body>   
+</html>

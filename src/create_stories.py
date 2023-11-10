@@ -15,6 +15,10 @@ from canvas import create_story
 from pydantic import BaseModel
 
 
+SCRIPT_FOLDER = Path(__file__).parent
+PROJECT_FOLDER = SCRIPT_FOLDER.parent
+
+
 class Template(BaseModel):
     canvas: Dict
     elements: Dict
@@ -103,8 +107,8 @@ def store_metadata(post: PostData, elements: ImageElements) -> Dict:
     }
 
 
-def write_metadata_file(metadata: List[Dict]) -> None:
-    md_file = os.path.join("stories", site, "metadata.yaml")
+def write_metadata_file(metadata: List[Dict], site: str) -> None:
+    md_file = PROJECT_FOLDER / "stories" / site / "metadata.yaml"
     if os.path.isfile(md_file):
         os.remove(md_file)
         
@@ -116,7 +120,7 @@ def adjust_elements(elements: ImageElements, site: str) -> ImageElements:
     """Adjust text, cover image or its position based on modified metadata.yaml file"""
     
     # Currently supports only text change
-    metadata_file = os.path.join("stories", site, "metadata.yaml")
+    metadata_file = PROJECT_FOLDER / "stories" / site / "metadata.yaml"
     with open(metadata_file, "r") as metadata:
         metavalues = yaml.safe_load(metadata)[elements.number]
     for text_id, text in enumerate(metavalues["texts"]):
@@ -127,23 +131,25 @@ def adjust_elements(elements: ImageElements, site: str) -> ImageElements:
     return elements
         
 
-if __name__ == "__main__":
-    parser = ArgumentParser(description="Create IG stories for specific IG page")
-    parser.add_argument("-s", "--site", 
-                        help="Name of the site to create IG stories for", 
-                        action="store",
-                        choices=["ht", "pe"],
-                        required=True,
-                        type=str,
-                        )
-    parser.add_argument("-r", "--recreate", 
-                        help="Recreate IG stories for selected site based on modified metadata.yaml file", 
-                        action="store_true",
-                        required=False,
-                        )
-    args = parser.parse_args()
+# if __name__ == "__main__":
+#     parser = ArgumentParser(description="Create IG stories for specific IG page")
+#     parser.add_argument("-s", "--site", 
+#                         help="Name of the site to create IG stories for", 
+#                         action="store",
+#                         choices=["ht", "pe"],
+#                         required=True,
+#                         type=str,
+#                         )
+#     parser.add_argument("-r", "--recreate", 
+#                         help="Recreate IG stories for selected site based on modified metadata.yaml file", 
+#                         action="store_true",
+#                         required=False,
+#                         )
+#     args = parser.parse_args()
     
-    site = args.site
+#     site = args.site
+
+def create_stories(site):
     clear_files(site)
 
     posts = get_posts_metadata(site)
@@ -153,18 +159,21 @@ if __name__ == "__main__":
     for number, post in enumerate(posts):
         post_elements = get_post_elements(number, post, story_template)
 
-        if args.recreate:
-            post_elements = adjust_elements(post_elements, site)
+        # if args.recreate:
+        #     post_elements = adjust_elements(post_elements, site)
 
         create_story(post_elements, site)
         
-        output_folder = os.path.join("stories", site)
+        output_folder = PROJECT_FOLDER / "stories" / site
         if not os.path.isdir(output_folder):
             os.mkdir(output_folder)
-        with open(os.path.join(output_folder, "links.txt"), "a") as links:
+        with open(output_folder / "links.txt", "a") as links:
             links.write(f"{number}: {post.link}\n")
            
         metadata.append(store_metadata(post, post_elements))
         
-    write_metadata_file(metadata)
+    write_metadata_file(metadata, site)
+    
+    
+create_stories("ht")
         

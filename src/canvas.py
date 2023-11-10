@@ -9,6 +9,10 @@ import os
 import urllib
 
 
+SCRIPT_FOLDER = Path(__file__).parent
+PROJECT_FOLDER = SCRIPT_FOLDER.parent
+
+
 class Text(BaseModel):
     text: str
     font: Optional[str]
@@ -72,7 +76,6 @@ def _merge_images(elements, canvas):
     if not elements.images:
         return
     for element in elements.images:
-        # image = Image.open(element["path"])
         image = open_image(element["path"])
         if "size" in element.keys() and image.size != element["size"]:
             image = image.resize(tuple(element["size"]))
@@ -180,7 +183,7 @@ def draw_shape(details) -> Image:
 def create_story(post_elements, site):
     canvas = create_canvas(post_elements.canvas_size)
     story = merge_elements(post_elements, canvas)
-    stories_site_dir = os.path.join("stories", site)
+    stories_site_dir = PROJECT_FOLDER / "stories" / site
     if not os.path.isdir(stories_site_dir):
         os.mkdir(stories_site_dir)
     story.save(f"{stories_site_dir}/{post_elements.number}.png", format="png")
