@@ -1,0 +1,49 @@
+---
+  url: "https://plnielanu.zoznam.sk/wp-json/wp/v2"
+  canvas:
+    height: 1920
+    width: 1080
+
+  elements:
+    background:
+      position:
+      - "center"
+      - 50
+      from_cover: True
+      size:
+      - "full"
+      - 995
+    images:
+    - image: "template"
+      from_cover: False
+      path: "media/pe/background.png"
+      size:
+      - 1080
+      - 1920
+      position:
+      - "center"
+      - 0
+    texts:
+    - text: "ZMEŇ\nNÁDPIS:"
+      font: "media/pe/fonts/Raleway-Black.ttf"
+      font_size: 94
+      align: "left"
+      color: "black"
+      y_axis: 1123
+      x_axis: 107
+      line_height: 1.15
+      word_wrap: 13
+      anchor: "la"
+    - 
+      font: "media/pe/fonts/Raleway-SemiBold.ttf"
+      font_size: 47
+      align: "left"
+      color: "black"
+      y_axis: 1366
+      x_axis: 107
+      line_height: 1.2
+      word_wrap: 36
+      anchor: "la"
+
+
+      

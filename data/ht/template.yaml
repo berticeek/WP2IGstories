@@ -1,4 +1,5 @@
 ---
+  url: "https://hashtag.zoznam.sk/wp-json/wp/v2"
   canvas:
     height: 1920
     width: 1080
@@ -8,9 +9,14 @@
       position:
       - "center"
       - 0
+      from_cover: True
+      size:
+      - "full"
+      - 1920
     images:
     - image: "logo"
-      path: "media/logo.png"
+      from_cover: False
+      path: "media/ht/logo.png"
       size:
       - 150
       - 150
@@ -32,14 +38,17 @@
       position:
       - "center"
       - 1194
-    text:
-      font: "media/fonts/Montserrat-ExtraBold.ttf"
+    texts:
+    - 
+      font: "media/ht/fonts/Montserrat-ExtraBold.ttf"
       font_size: 53
       align: "center"
       color: "black"
       y_axis: 1370
+      x_axis: "center"
       line_height: 1.3
       word_wrap: 29
+      anchor: "mm"
 
 
       

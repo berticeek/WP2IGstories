@@ -1,7 +1,18 @@
 import requests
 from datetime import datetime, timedelta
-from typing import List, Set
+from typing import List, Set, Dict
 from pydantic import BaseModel
+import yaml
+import os
+from urllib.parse import urlparse, urljoin
+
+from file_paths import template_path, predef_posts_file
+
+
+def get_api_url(site: str) -> str:
+    with open(template_path(site)) as template:
+        template = yaml.safe_load(template)
+    return template["url"]
 
 
 class Posts:
@@ -60,6 +71,18 @@ def get_valid_posts(api_url: str) -> List:
     return posts_list[:5]
 
 
+def check_predefined_posts(site: str, posts: List) -> List:
+    api_url = get_api_url(site)
+    
+    with open(predef_posts_file(site), "r") as f:
+        predef_posts = yaml.safe_load(f)
+    
+    for p_id, post in enumerate(predef_posts):
+        if post["url"]:
+            posts[p_id] = get_single_post(api_url, post["url"])
+    
+    return posts
+
 class PostData(BaseModel):
     title: str
     link: str
@@ -73,6 +96,17 @@ def _get_post_cover(api_url):
         return result["link"]
     else:
         raise Exception(response.text, response.status_code)
+
+
+def get_single_post(api_url: str, post_url: str) -> Dict:
+    slug = urlparse(post_url).path.strip("/")
+    slug_api_url = os.path.join(api_url, f"posts?slug={slug}")
+
+    response = requests.get(slug_api_url)
+    if response.status_code == 200:
+        return response.json()[0]
+    else:
+        return None
     
 
 def get_post_data(url, post) -> PostData:
@@ -86,8 +120,11 @@ def get_post_data(url, post) -> PostData:
     )
 
 
-def get_posts_metadata(api_url: str) -> List[PostData]:
+def get_posts_metadata(site: str) -> List[PostData]:
+    api_url = get_api_url(site)
+    
     posts = get_valid_posts(api_url)
+    posts = check_predefined_posts(site, posts)
     posts_data = []  
     for post in posts:
         posts_data.append(get_post_data(api_url, post))
