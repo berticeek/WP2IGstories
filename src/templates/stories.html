@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang = "en">
+   <head>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+      <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>   
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+      <link rel="stylesheet" href="../static/style.css">
+   </head>
+   <body>
+        <h1>Displaying Images</h1>
+        {% for image_path in stories %}
+            <img src="{{ url_for('uploaded_file', site=site, filename=image_path) }}" alt="{{ image_path }}" class="story">
+        {% endfor %}
+    </body>
+</html>

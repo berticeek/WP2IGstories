@@ -180,10 +180,15 @@ def draw_shape(details) -> Image:
     return shape
 
 
-def create_story(post_elements, site):
+def create_story(post_elements, site: str) -> Path:
+    
+    stories_site_dir = PROJECT_FOLDER / "stories" / site
+    image_path = f"{stories_site_dir}/{post_elements.number}.png"
+    
     canvas = create_canvas(post_elements.canvas_size)
     story = merge_elements(post_elements, canvas)
-    stories_site_dir = PROJECT_FOLDER / "stories" / site
     if not os.path.isdir(stories_site_dir):
         os.mkdir(stories_site_dir)
-    story.save(f"{stories_site_dir}/{post_elements.number}.png", format="png")
+    story.save(image_path, format="png")
+    
+    return os.path.basename(image_path)

@@ -149,8 +149,10 @@ def adjust_elements(elements: ImageElements, site: str) -> ImageElements:
     
 #     site = args.site
 
-def create_stories(site):
+def create_stories(site: str) -> List:
     clear_files(site)
+    
+    stories = []
 
     posts = get_posts_metadata(site)
     
@@ -162,7 +164,7 @@ def create_stories(site):
         # if args.recreate:
         #     post_elements = adjust_elements(post_elements, site)
 
-        create_story(post_elements, site)
+        stories.append(create_story(post_elements, site))
         
         output_folder = PROJECT_FOLDER / "stories" / site
         if not os.path.isdir(output_folder):
@@ -173,7 +175,8 @@ def create_stories(site):
         metadata.append(store_metadata(post, post_elements))
         
     write_metadata_file(metadata, site)
+
+    return stories
     
-    
-create_stories("ht")
+# create_stories("ht")
         

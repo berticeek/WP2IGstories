@@ -44,4 +44,12 @@ form button {
 }
 form button:hover {
   background-color: #45a049;
+}
+
+.story {
+  max-width: 300px;
+  height: auto;
+  display: inline;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }/*# sourceMappingURL=style.css.map */

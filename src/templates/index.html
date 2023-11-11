@@ -13,12 +13,12 @@
             <h1>Storkoprístroj 3000</h1>
 
             <form>
-                    <label for="site">Vyber si stránku:</label>
-                    <select id="site" name="site">
-                        <option value="ht">Hashtag</option>
-                        <option value="pe">Plní Elánu</option>
-                    </select>
-                    <button id="create">Vytvor storky</button>
+                <label for="site">Vyber si stránku:</label>
+                <select id="site" name="site">
+                    <option value="ht">Hashtag</option>
+                    <option value="pe">Plní Elánu</option>
+                </select>
+                <button type="button" id="create">Vytvor storky</button>
             </form>
         </div>
         
@@ -32,6 +32,7 @@
                        data: { 'option': site },
                        success: function(response) {
                            console.log(response);
+                           window.location.href = response.redirect_url;
                        }
                    });
                });
