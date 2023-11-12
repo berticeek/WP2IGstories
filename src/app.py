@@ -6,7 +6,7 @@ import os
 import tempfile
 import shutil
 import time
-
+import secrets
 
 # def create_tmp_dir():
 #     return tempfile.mkdtemp
@@ -15,10 +15,13 @@ import time
 # def delete_tmp_dir(tmp_dir):
 #     shutil.rmtree(tmp_dir)
 
+
 app = Flask(__name__)
+app.secret_key = secrets.token_hex(16)
+
 script_dir = os.getcwd()
-scipt_parent_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
-app.config["UPLOAD_FOLDER"] = os.path.join(scipt_parent_dir, "stories")
+# script_parent_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
+app.config["UPLOAD_FOLDER"] = os.path.join(script_dir, "stories")
 
 
 @app.route("/")
@@ -28,19 +31,18 @@ def index():
 @app.route("/create", methods=["GET"])
 def create():
     if request.method == "GET":
-        site = request.args.get('option')
-        # upload_folder = os.path.join("stories", site)
-        # app.config["UPLOAD_FOLDER"] = upload_folder
-         
-        stories  = create_stories(site)
-        return jsonify({'redirect_url': url_for("show_images", site=site, images=",".join(stories))})
+        site = request.args.get('option')       
+        metadata  = create_stories(site)
+        session["metadata"] = metadata
+        return jsonify({'redirect_url': url_for("show_images", site=site)})
         
 @app.route("/show_images", methods=["GET"])
 def show_images():
     site = request.args.get("site")
-    image_paths_param = request.args.get("images")
-    image_paths = image_paths_param.split(",")
-    return render_template("stories.html", stories=image_paths, site=site)
+    metadata = session.get("metadata", {})
+    
+    images = [str(x["number"]) + ".png" for x in metadata]
+    return render_template("stories.html", stories=metadata, site=site)
 
 
 @app.route("/stories/<site>/<filename>")

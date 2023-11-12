@@ -1,5 +1,6 @@
 from pathlib import Path
 import yaml
+from envyaml import EnvYAML
 from typing import Dict, List, Tuple, Optional
 import os
 from argparse import ArgumentParser
@@ -27,20 +28,21 @@ class Template(BaseModel):
 
 
 def get_story_template(site: str) -> Template:
-    with open(template_path(site)) as template:
-        template = yaml.safe_load(template)
-        
-        if "texts" in template["elements"]:
-            texts_config = template["elements"]["texts"]
-        else: 
-            text_config = None
-        
-        return Template(
-            canvas = template["canvas"],
-            elements = template["elements"],
-            background = template["elements"]["background"],
-            texts_config = texts_config,
-        )
+    # with open(template_path(site)) as template:
+        # template = yaml.safe_load(template)
+    template = EnvYAML(template_path(site))
+    
+    if "texts" in template["elements"]:
+        texts_config = template["elements"]["texts"]
+    else: 
+        text_config = None
+    
+    return Template(
+        canvas = template["canvas"],
+        elements = template["elements"],
+        background = template["elements"]["background"],
+        texts_config = texts_config,
+    )
 
 
 def get_post_elements(number: int, post, template) -> ImageElements:
@@ -107,13 +109,15 @@ def store_metadata(post: PostData, elements: ImageElements) -> Dict:
     }
 
 
-def write_metadata_file(metadata: List[Dict], site: str) -> None:
+def write_metadata_file(metadata: List[Dict], site: str) -> Path:
     md_file = PROJECT_FOLDER / "stories" / site / "metadata.yaml"
     if os.path.isfile(md_file):
         os.remove(md_file)
         
     with open(md_file, "a", encoding="utf-8") as f_metadata:
         yaml.dump(metadata, f_metadata, default_flow_style=False, allow_unicode=True, sort_keys=False)
+        
+    return md_file
 
 
 def adjust_elements(elements: ImageElements, site: str) -> ImageElements:
@@ -121,8 +125,9 @@ def adjust_elements(elements: ImageElements, site: str) -> ImageElements:
     
     # Currently supports only text change
     metadata_file = PROJECT_FOLDER / "stories" / site / "metadata.yaml"
-    with open(metadata_file, "r") as metadata:
-        metavalues = yaml.safe_load(metadata)[elements.number]
+    # with open(metadata_file, "r") as metadata:
+        # metavalues = yaml.safe_load(metadata)[elements.number]
+    metavalues = EnvYAML(metadata_file)[elements.number]
     for text_id, text in enumerate(metavalues["texts"]):
         elements.texts[text_id].text = text
     
@@ -151,8 +156,6 @@ def adjust_elements(elements: ImageElements, site: str) -> ImageElements:
 
 def create_stories(site: str) -> List:
     clear_files(site)
-    
-    stories = []
 
     posts = get_posts_metadata(site)
     
@@ -164,7 +167,7 @@ def create_stories(site: str) -> List:
         # if args.recreate:
         #     post_elements = adjust_elements(post_elements, site)
 
-        stories.append(create_story(post_elements, site))
+        create_story(post_elements, site)
         
         output_folder = PROJECT_FOLDER / "stories" / site
         if not os.path.isdir(output_folder):
@@ -176,7 +179,7 @@ def create_stories(site: str) -> List:
         
     write_metadata_file(metadata, site)
 
-    return stories
+    return metadata
     
 # create_stories("ht")
         

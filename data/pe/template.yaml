@@ -17,7 +17,7 @@
     images:
     - image: "template"
       from_cover: False
-      path: "../media/pe/background.png"
+      path: "${W2I_PATH}/media/pe/background.png"
       size:
       - 1080
       - 1920
@@ -26,7 +26,7 @@
       - 0
     texts:
     - text: "ZMEŇ\nNÁDPIS:"
-      font: "../media/pe/fonts/Raleway-Black.ttf"
+      font: "${W2I_PATH}/media/pe/fonts/Raleway-Black.ttf"
       font_size: 94
       align: "left"
       color: "black"
@@ -36,7 +36,7 @@
       word_wrap: 13
       anchor: "la"
     - 
-      font: "../media/pe/fonts/Raleway-SemiBold.ttf"
+      font: "${W2I_PATH}/media/pe/fonts/Raleway-SemiBold.ttf"
       font_size: 47
       align: "left"
       color: "black"

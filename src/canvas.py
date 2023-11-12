@@ -191,4 +191,4 @@ def create_story(post_elements, site: str) -> Path:
         os.mkdir(stories_site_dir)
     story.save(image_path, format="png")
     
-    return os.path.basename(image_path)
+    # return os.path.basename(image_path)

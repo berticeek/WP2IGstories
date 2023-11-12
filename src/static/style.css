@@ -1,22 +1,22 @@
 body {
+  background-color: #f4f4f4; /* Optional background color */
+  justify-items: center;
+}
+
+#container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  margin: 0;
-  background-color: #f4f4f4; /* Optional background color */
+  height: 100%;
+  width: 80%;
+  margin: auto;
+  padding: 50px 0;
 }
-
-.container {
-  text-align: center;
-}
-
-h1 {
+#container h1 {
   font-family: "Arial", sans-serif;
   color: #333;
 }
-
-form {
+#container form {
   margin-top: 20px; /* Adjust the margin as needed */
   text-align: center;
   padding: 20px;
@@ -24,17 +24,17 @@ form {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-form label {
+#container form label {
   display: block;
   margin-bottom: 10px;
 }
-form select {
+#container form select {
   width: 100%;
   padding: 10px;
   margin-bottom: 20px;
   box-sizing: border-box;
 }
-form button {
+#container form button {
   background-color: #4caf50;
   color: #fff;
   padding: 10px 20px;
@@ -42,14 +42,50 @@ form button {
   border-radius: 4px;
   cursor: pointer;
 }
-form button:hover {
+#container form button:hover {
   background-color: #45a049;
 }
-
-.story {
-  max-width: 300px;
-  height: auto;
-  display: inline;
+#container #stories-container {
+  text-align: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 40px;
+}
+#container #stories-container .story {
+  display: flex;
+  align-items: center;
+}
+#container #stories-container .story .story-image {
+  width: 300px;
+  max-width: 100%;
+  display: block;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+#container #stories-container .story .metadata {
+  width: 500px;
+  margin-bottom: 20px;
+  margin-right: 50px;
+}
+#container #stories-container .story .metadata label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+#container #stories-container .story .metadata input[type=text],
+#container #stories-container .story .metadata textarea {
+  text-align: center;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: none;
+  height: auto;
+}
+#container #stories-container .story .metadata input[type=text] {
+  width: 100px;
 }/*# sourceMappingURL=style.css.map */
