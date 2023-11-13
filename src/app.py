@@ -32,16 +32,16 @@ def index():
 def create():
     if request.method == "GET":
         site = request.args.get('option')       
-        metadata  = create_stories(site)
+        metadata  = create_stories(site, recreate=False)
         session["metadata"] = metadata
         return jsonify({'redirect_url': url_for("show_images", site=site)})
         
-@app.route("/show_images", methods=["GET"])
+@app.route("/show_images", methods=["GET", "POST"])
 def show_images():
     site = request.args.get("site")
     metadata = session.get("metadata", {})
     
-    images = [str(x["number"]) + ".png" for x in metadata]
+    # images = [str(x["number"]) + ".png" for x in metadata]
     return render_template("stories.html", stories=metadata, site=site)
 
 
@@ -49,6 +49,16 @@ def show_images():
 def uploaded_file(site, filename):
     upload_folder = os.path.join(app.config['UPLOAD_FOLDER'], site)
     return send_from_directory(upload_folder, filename)
+
+
+@app.route("/recreate", methods=["POST"])
+def recreate():
+    data = request.get_json()
+    site = data['site']
+    metadata = data['metadata']
+    new_metadata = create_stories(site, recreate=True, metadata=metadata)
+    session["metadata"] = new_metadata
+    return jsonify({'redirect_url': url_for("show_images", site=site)})
     
 
 if __name__ == "__main__":
