@@ -120,18 +120,18 @@ def write_metadata_file(metadata: List[Dict], site: str) -> Path:
     return md_file
 
 
-def adjust_elements(elements: ImageElements, site: str) -> ImageElements:
+def adjust_elements(elements: ImageElements, metadata) -> ImageElements:
     """Adjust text, cover image or its position based on modified metadata.yaml file"""
     
     # Currently supports only text change and background position
-    metadata_file = PROJECT_FOLDER / "stories" / site / "metadata.yaml"
+    # metadata_file = PROJECT_FOLDER / "stories" / site / "metadata.yaml"
     # with open(metadata_file, "r") as metadata:
         # metavalues = yaml.safe_load(metadata)[elements.number]
-    metavalues = EnvYAML(metadata_file)[elements.number]
-    for text_id, text in enumerate(metavalues["texts"]):
+    # metavalues = EnvYAML(metadata_file)[elements.number]
+    for text_id, text in enumerate(metadata["texts"]):
         elements.texts[text_id].text = text
     
-    elements.background.position[0] = metavalues["image_position_x"]
+    elements.background.position[0] = metadata["image_position_x"]
         
     return elements
         
@@ -162,7 +162,7 @@ def create_stories(site: str, recreate: bool, metadata: List = None) -> List:
         for post_data in metadata:
             posts.append(
                 PostData(
-                    title = "\n".join(post_data["texts"]),
+                    title = "",
                     link = post_data["url"],
                     cover = post_data["image"]
                 ))
@@ -174,8 +174,8 @@ def create_stories(site: str, recreate: bool, metadata: List = None) -> List:
     for number, post in enumerate(posts):
         post_elements = get_post_elements(number, post, story_template)
 
-        # if recreate:
-        #     post_elements = adjust_elements(post_elements, site)
+        if recreate:
+            post_elements = adjust_elements(post_elements, metadata[post_elements.number])
 
         create_story(post_elements, site)
         
