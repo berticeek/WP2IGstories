@@ -123,7 +123,7 @@ def write_metadata_file(metadata: List[Dict], site: str) -> Path:
 def adjust_elements(elements: ImageElements, site: str) -> ImageElements:
     """Adjust text, cover image or its position based on modified metadata.yaml file"""
     
-    # Currently supports only text change
+    # Currently supports only text change and background position
     metadata_file = PROJECT_FOLDER / "stories" / site / "metadata.yaml"
     # with open(metadata_file, "r") as metadata:
         # metavalues = yaml.safe_load(metadata)[elements.number]
@@ -154,17 +154,27 @@ def adjust_elements(elements: ImageElements, site: str) -> ImageElements:
     
 #     site = args.site
 
-def create_stories(site: str) -> List:
+def create_stories(site: str, recreate: bool, metadata: List = None) -> List:
     clear_files(site)
 
-    posts = get_posts_metadata(site)
+    if recreate:
+        posts = []
+        for post_data in metadata:
+            posts.append(
+                PostData(
+                    title = "\n".join(post_data["texts"]),
+                    link = post_data["url"],
+                    cover = post_data["image"]
+                ))
+    else:
+        posts = get_posts_metadata(site)
+        metadata = []  
     
     story_template = get_story_template(site)
-    metadata = []    
     for number, post in enumerate(posts):
         post_elements = get_post_elements(number, post, story_template)
 
-        # if args.recreate:
+        # if recreate:
         #     post_elements = adjust_elements(post_elements, site)
 
         create_story(post_elements, site)
@@ -174,12 +184,27 @@ def create_stories(site: str) -> List:
             os.mkdir(output_folder)
         with open(output_folder / "links.txt", "a") as links:
             links.write(f"{number}: {post.link}\n")
-           
-        metadata.append(store_metadata(post, post_elements))
         
-    write_metadata_file(metadata, site)
+        if not recreate:           
+            metadata.append(store_metadata(post, post_elements))
+        
+    # write_metadata_file(metadata, site)
 
     return metadata
+
+
+# def recreate_stories(metadata, site):
+    
+#     story_template = get_story_template(site)
+    
+#     for post_data in metadata:
+#         post = PostData(
+#             title = "\n".join(post_data["texts"]),
+#             link = post_data["url"],
+#             cover = post_data["image"]
+#         )
+#         post_elements = get_post_elements(post_data["number"], post, story_template)
+#         post_elements = adjust_elements(post_elements, site)
     
 # create_stories("ht")
         
