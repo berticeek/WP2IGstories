@@ -49,6 +49,19 @@ body button:hover {
   margin-bottom: 20px;
   box-sizing: border-box;
 }
+.container #create-stories-form form input[type=text] {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s, box-shadow 0.3s;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+.container #create-stories-form form input[type=text]:hover {
+  border-color: #007BFF;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
 .container #create-stories-form #links-articles .article-link {
   display: block;
   margin: 10px 0;
@@ -59,6 +72,7 @@ body button:hover {
   margin: auto;
   margin-bottom: 10px;
   color: #656c74;
+  font-weight: bolder;
   border: none;
   padding: 4px 10px;
   font-size: 16px;
@@ -100,15 +114,18 @@ body button:hover {
 }
 .container #stories-container .story .metadata input[type=text],
 .container #stories-container .story .metadata textarea {
-  text-align: center;
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  resize: none;
-  height: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s, box-shadow 0.3s;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+.container #stories-container .story .metadata input[type=text]:hover,
+.container #stories-container .story .metadata textarea:hover {
+  border-color: #007BFF;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
 }
 .container #stories-container .story .metadata input[type=text] {
   width: 100px;
