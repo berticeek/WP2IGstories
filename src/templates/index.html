@@ -9,17 +9,24 @@
       <link rel="stylesheet" href="../static/style.css">
    </head>
    <body>
-        <div id="container">
+        <div class="container cont-main-page">
             <h1>Storkoprístroj 3000</h1>
 
-            <form>
-                <label for="site">Vyber si stránku:</label>
-                <select id="site" name="site">
-                    <option value="ht">Hashtag</option>
-                    <option value="pe">Plní Elánu</option>
-                </select>
-                <button type="button" id="create">Vytvor storky</button>
-            </form>
+            <div id="create-stories-form">
+                <form>
+                    <label for="site">Vyber si stránku:</label>
+                    <select id="site" name="site">
+                        <option value="ht">Hashtag</option>
+                        <option value="pe">Plní Elánu</option>
+                    </select>
+                    <div id="links-articles">
+                        <label for="articles"> Vlož odkazy na články:</label>
+                        <input type="text" id="article-link1" name="article-link1" class="article-link">
+                    </div>
+                    <button type="button" onclick="addInput()" class="add-more-button">+</button>
+                    <button type="button" id="create">Vytvor storky</button>
+                </form>
+            <div>
         </div>
         
        <script>
@@ -37,6 +44,18 @@
                    });
                });
            });
+
+            function addInput() {
+                var container = document.getElementById('links-articles');
+                var count = container.children.length; - 1
+
+                var input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'article-link';
+                input.id = 'article-link' + count;
+                input.name = 'article-link' + count;
+                container.appendChild(input);
+            }
        </script>
    </body>   
 </html>

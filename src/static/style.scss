@@ -2,7 +2,7 @@ body {
     background-color: #f4f4f4; /* Optional background color */
     justify-items: center;
     button {
-        background-color: #4caf50;
+        background-color: #6FA1D1;
         color: #fff;
         padding: 10px 20px;
         border: none;
@@ -10,44 +10,74 @@ body {
         cursor: pointer;
 
         &:hover {
-            background-color: #45a049;
+            background-color: #4B8AC9;
         }
     }
 }
 
-#container {
+.cont-main-page{
+    flex-direction: column;
+}
+
+.container {
     display: flex;
     justify-content: center;
     align-items: center;
     // align-self: center;
-    height: 100%;
+    min-height: 100vh;
+    // height: 100%;
     width: 80%;
     margin: auto;
     padding: 50px 0;
+    // border:1px solid red;
 
     h1 {
         font-family: 'Arial', sans-serif;
         color: #333;
     }
-    
-    form {
-        margin-top: 20px; /* Adjust the margin as needed */
-        text-align: center;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    
-        label {
-            display: block;
-            margin-bottom: 10px;
+
+    #create-stories-form{
+        form {
+            margin-top: 20px; /* Adjust the margin as needed */
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        
+            label {
+                display: block;
+                margin-bottom: 10px;
+            }
+        
+            select {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 20px;
+                box-sizing: border-box;
+            }
         }
-    
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            box-sizing: border-box;
+        #links-articles{
+            .article-link{
+                display: block;
+                margin: 10px 0;
+            }
+        }
+        .add-more-button {
+            background-color: #c1d1e0;
+            display: block;
+            margin: auto;
+            margin-bottom: 10px;
+            color: #656c74;
+            border: none;
+            padding: 4px 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            &:hover{
+                background-color: #6FA1D1;
+                color: #fff;
+            }
         }
     }
     

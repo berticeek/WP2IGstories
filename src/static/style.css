@@ -3,7 +3,7 @@ body {
   justify-items: center;
 }
 body button {
-  background-color: #4caf50;
+  background-color: #6FA1D1;
   color: #fff;
   padding: 10px 20px;
   border: none;
@@ -11,23 +11,27 @@ body button {
   cursor: pointer;
 }
 body button:hover {
-  background-color: #45a049;
+  background-color: #4B8AC9;
 }
 
-#container {
+.cont-main-page {
+  flex-direction: column;
+}
+
+.container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  min-height: 100vh;
   width: 80%;
   margin: auto;
   padding: 50px 0;
 }
-#container h1 {
+.container h1 {
   font-family: "Arial", sans-serif;
   color: #333;
 }
-#container form {
+.container #create-stories-form form {
   margin-top: 20px; /* Adjust the margin as needed */
   text-align: center;
   padding: 20px;
@@ -35,17 +39,37 @@ body button:hover {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-#container form label {
+.container #create-stories-form form label {
   display: block;
   margin-bottom: 10px;
 }
-#container form select {
+.container #create-stories-form form select {
   width: 100%;
   padding: 10px;
   margin-bottom: 20px;
   box-sizing: border-box;
 }
-#container #stories-container {
+.container #create-stories-form #links-articles .article-link {
+  display: block;
+  margin: 10px 0;
+}
+.container #create-stories-form .add-more-button {
+  background-color: #c1d1e0;
+  display: block;
+  margin: auto;
+  margin-bottom: 10px;
+  color: #656c74;
+  border: none;
+  padding: 4px 10px;
+  font-size: 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+.container #create-stories-form .add-more-button:hover {
+  background-color: #6FA1D1;
+  color: #fff;
+}
+.container #stories-container {
   text-align: center;
   height: 100%;
   display: flex;
@@ -53,29 +77,29 @@ body button:hover {
   flex-direction: column;
   gap: 40px;
 }
-#container #stories-container .story {
+.container #stories-container .story {
   display: flex;
   align-items: center;
 }
-#container #stories-container .story .story-image {
+.container #stories-container .story .story-image {
   width: 300px;
   max-width: 100%;
   display: block;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-#container #stories-container .story .metadata {
+.container #stories-container .story .metadata {
   width: 500px;
   margin-bottom: 20px;
   margin-right: 50px;
 }
-#container #stories-container .story .metadata label {
+.container #stories-container .story .metadata label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
 }
-#container #stories-container .story .metadata input[type=text],
-#container #stories-container .story .metadata textarea {
+.container #stories-container .story .metadata input[type=text],
+.container #stories-container .story .metadata textarea {
   text-align: center;
   width: 100%;
   padding: 8px;
@@ -86,6 +110,6 @@ body button:hover {
   resize: none;
   height: auto;
 }
-#container #stories-container .story .metadata input[type=text] {
+.container #stories-container .story .metadata input[type=text] {
   width: 100px;
 }/*# sourceMappingURL=style.css.map */
