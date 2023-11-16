@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory, session
 
-from create_stories import create_stories
+from create_stories import create_stories, get_story_template
+from get_posts_metadata import get_posts_metadata
 
 import os
 import tempfile
@@ -28,18 +29,37 @@ app.config["UPLOAD_FOLDER"] = os.path.join(script_dir, "stories")
 def index():
     return render_template("index.html")
 
-@app.route("/create", methods=["GET"])
-def create():
-    if request.method == "GET":
-        site = request.args.get('option')       
-        metadata  = create_stories(site, recreate=False)
-        session["metadata"] = metadata
-        return jsonify({'redirect_url': url_for("show_images", site=site)})
+
+@app.route("/get_stories_template", methods=["GET"])
+def get_stories_template():
+    site = request.args.get("site")
+    template = get_story_template(site)
+    return jsonify(template)
+
+
+@app.route("/get_posts_data", methods=["GET"])
+def get_posts_data():
+    site = request.args.get("site")
+    links = list(filter(None, request.args.getlist("links")))
+    posts_data = get_posts_metadata(site, links)
+    return jsonify(posts_data)
+
+
+@app.route("/create_images", methods=["POST"])
+def create_images():
+    data = request.get_json()
+    site = data["site"]
+    posts = data["posts"]
+    template = data["template"]
+    stories_metadata  = create_stories(site, posts, template)
+    session["stories_metadata"] = stories_metadata
+    return jsonify({'redirect_url': url_for("show_images", site=site)})
+        
         
 @app.route("/show_images", methods=["GET", "POST"])
 def show_images():
     site = request.args.get("site")
-    metadata = session.get("metadata", {})
+    metadata = session.get("stories_metadata", {})
     
     # images = [str(x["number"]) + ".png" for x in metadata]
     return render_template("stories.html", stories=metadata, site=site)
@@ -57,7 +77,7 @@ def recreate():
     site = data['site']
     metadata = data['metadata']
     new_metadata = create_stories(site, recreate=True, metadata=metadata)
-    session["metadata"] = new_metadata
+    session["stories_metadata"] = new_metadata
     return jsonify({'redirect_url': url_for("show_images", site=site)})
     
 
