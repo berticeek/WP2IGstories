@@ -42,32 +42,32 @@ def get_story_template(site: str) -> Template:
         elements = template["elements"],
         background = template["elements"]["background"],
         texts_config = texts_config,
-    )
+    ).model_dump()
 
 
 def get_post_elements(number: int, post, template) -> ImageElements:
-    canvas_size = Canvas(width=template.canvas["width"], height=template.canvas["height"])
+    canvas_size = Canvas(width=template["canvas"]["width"], height=template["canvas"]["height"])
     
-    if template.background["from_cover"]:
-        bg_path = post.cover
+    if template["background"]["from_cover"]:
+        bg_path = post["cover"]
     else:
-        bg_path = template.background["path"]
+        bg_path = template["background"]["path"]
     
-    for im_id, image in enumerate(template.elements["images"]):
+    for im_id, image in enumerate(template["elements"]["images"]):
         if image["from_cover"]:
-            template.elements["images"][im_id].update({"path": post.cover})
+            template["elements"]["images"][im_id].update({"path": post["cover"]})
             
-    if "shapes" in template.elements:
-        shapes=template.elements["shapes"]
+    if "shapes" in template["elements"]:
+        shapes=template["elements"]["shapes"]
     else:
         shapes=None
         
     texts = []   
-    for text_conf in template.texts_config:
+    for text_conf in template["texts_config"]:
         if "text" in text_conf:
             text = text_conf["text"]
         else:
-            text = post.title
+            text = post["title"]
         texts.append(Text(
             text=text,
             font=text_conf["font"],
@@ -87,11 +87,11 @@ def get_post_elements(number: int, post, template) -> ImageElements:
             canvas_size=canvas_size,
             background=Background(
                 path = bg_path,
-                position = template.background["position"],
-                size = template.background["size"],
-                from_cover=template.background["from_cover"]
+                position = template["background"]["position"],
+                size = template["background"]["size"],
+                from_cover=template["background"]["from_cover"]
             ),
-            images=template.elements["images"],
+            images=template["elements"]["images"],
             shapes=shapes,
             texts=texts,
         ))
@@ -101,7 +101,7 @@ def store_metadata(post: PostData, elements: ImageElements) -> Dict:
     texts = [x.text for x in elements.texts]
     return {
         "number": elements.number,
-        "url": f"{post.link}",
+        "url": f"{post['link']}",
         "image": f"{elements.background.path}",
         "image_position_x":f"{elements.background.position[0]}",
         "texts": texts,
@@ -124,10 +124,6 @@ def adjust_elements(elements: ImageElements, metadata) -> ImageElements:
     """Adjust text, cover image or its position based on modified metadata.yaml file"""
     
     # Currently supports only text change and background position
-    # metadata_file = PROJECT_FOLDER / "stories" / site / "metadata.yaml"
-    # with open(metadata_file, "r") as metadata:
-        # metavalues = yaml.safe_load(metadata)[elements.number]
-    # metavalues = EnvYAML(metadata_file)[elements.number]
     for text_id, text in enumerate(metadata["texts"]):
         elements.texts[text_id].text = text
     
@@ -136,46 +132,30 @@ def adjust_elements(elements: ImageElements, metadata) -> ImageElements:
     return elements
         
 
-# if __name__ == "__main__":
-#     parser = ArgumentParser(description="Create IG stories for specific IG page")
-#     parser.add_argument("-s", "--site", 
-#                         help="Name of the site to create IG stories for", 
-#                         action="store",
-#                         choices=["ht", "pe"],
-#                         required=True,
-#                         type=str,
-#                         )
-#     parser.add_argument("-r", "--recreate", 
-#                         help="Recreate IG stories for selected site based on modified metadata.yaml file", 
-#                         action="store_true",
-#                         required=False,
-#                         )
-#     args = parser.parse_args()
-    
-#     site = args.site
-
-def create_stories(site: str, recreate: bool, metadata: List = None) -> List:
+def create_stories(site: str, posts: List[PostData], story_template: Template) -> List:
     clear_files(site)
 
-    if recreate:
-        posts = []
-        for post_data in metadata:
-            posts.append(
-                PostData(
-                    title = "",
-                    link = post_data["url"],
-                    cover = post_data["image"]
-                ))
-    else:
-        posts = get_posts_metadata(site)
-        metadata = []  
+    # if recreate:
+    #     posts = []
+    #     for post_data in metadata:
+    #         posts.append(
+    #             PostData(
+    #                 title = "",
+    #                 link = post_data["url"],
+    #                 cover = post_data["image"]
+    #             ))
+    # else:
+    #     posts = get_posts_metadata(site)
+    #     metadata = []  
     
-    story_template = get_story_template(site)
+    metadata = []
+    
+    # story_template = get_story_template(site)
     for number, post in enumerate(posts):
         post_elements = get_post_elements(number, post, story_template)
 
-        if recreate:
-            post_elements = adjust_elements(post_elements, metadata[post_elements.number])
+        # if recreate:
+        #     post_elements = adjust_elements(post_elements, metadata[post_elements.number])
 
         create_story(post_elements, site)
         
@@ -183,28 +163,13 @@ def create_stories(site: str, recreate: bool, metadata: List = None) -> List:
         if not os.path.isdir(output_folder):
             os.mkdir(output_folder)
         with open(output_folder / "links.txt", "a") as links:
-            links.write(f"{number}: {post.link}\n")
+            links.write(f"{number}: {post['link']}\n")
         
-        if not recreate:           
-            metadata.append(store_metadata(post, post_elements))
+        # if not recreate:           
+            # metadata.append(store_metadata(post, post_elements))
+        metadata.append(store_metadata(post, post_elements))
         
     # write_metadata_file(metadata, site)
 
     return metadata
-
-
-# def recreate_stories(metadata, site):
-    
-#     story_template = get_story_template(site)
-    
-#     for post_data in metadata:
-#         post = PostData(
-#             title = "\n".join(post_data["texts"]),
-#             link = post_data["url"],
-#             cover = post_data["image"]
-#         )
-#         post_elements = get_post_elements(post_data["number"], post, story_template)
-#         post_elements = adjust_elements(post_elements, site)
-    
-# create_stories("ht")
         
