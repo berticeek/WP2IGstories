@@ -33,15 +33,46 @@
            $(document).ready(function(){
                $("#create").click(function(){
                     var site = $('#site').val();
-                   $.ajax({
-                       type: 'GET',
-                       url: '/create',
-                       data: { 'option': site },
-                       success: function(response) {
-                           console.log(response);
-                           window.location.href = response.redirect_url;
-                       }
-                   });
+                    var links = []
+                    
+                    $('.article-link').each(function() {
+                        links.push($(this).val());
+                    });
+
+                    console.log("Site:", site);
+                    console.log("Links:", links);
+                    
+                    fetch(`/get_posts_data?site=${site}&links=${links}`, {
+                        method: "GET"
+                    })
+                    .then(response => response.json())
+                    .then(postsData => {
+                        data_posts = postsData;
+                        return fetch(`/get_stories_template?site=${site}`, {
+                            method: "GET"
+                        });
+                    })
+                    .then(response => response.json())
+                    .then(templateData => {
+                        template = templateData;
+                        return fetch(`/create_images`, {
+                            method: "POST",
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                site: site,
+                                posts: data_posts,
+                                template: template,
+                            }),
+                        });
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        window.location.href = `/show_images?site=${site}`;
+                    })
+
+
                });
            });
 
