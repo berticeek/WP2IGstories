@@ -1,13 +1,16 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory, session
 
-from create_stories import create_stories, get_story_template
+from create_stories import create_stories, get_story_template, get_elements
 from get_posts_metadata import get_posts_metadata
+
+from create_stories import Template, PostData, ImageElements
 
 import os
 import tempfile
 import shutil
 import time
 import secrets
+import json
 
 # def create_tmp_dir():
 #     return tempfile.mkdtemp
@@ -45,13 +48,26 @@ def get_posts_data():
     return jsonify(posts_data)
 
 
+@app.route("/get_posts_elements", methods=["GET"])
+def get_posts_elements():
+    posts_json = json.loads(request.args.get("posts"))
+    posts = [PostData.model_validate(x) for x in posts_json]
+    
+    template_json = json.loads(request.args.get("template"))
+    template = Template.model_validate(template_json)
+    posts_elements = get_elements(posts, template)
+    return jsonify(posts_elements)
+
+
 @app.route("/create_images", methods=["POST"])
 def create_images():
     data = request.get_json()
     site = data["site"]
-    posts = data["posts"]
-    template = data["template"]
-    stories_metadata  = create_stories(site, posts, template)
+    
+    posts_elements_json = data["posts_elements"]
+    posts_elements = [ImageElements.model_validate(x) for x in posts_elements_json]
+    
+    stories_metadata  = create_stories(site, posts_elements)
     session["stories_metadata"] = stories_metadata
     return jsonify({'redirect_url': url_for("show_images", site=site)})
         
