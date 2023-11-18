@@ -45,6 +45,7 @@ class ImageElements(BaseModel):
     images: Optional[List]
     shapes: Optional[List]
     texts: List[Text]
+    post_url: str
 
 
 def create_canvas(canvas) -> Image:

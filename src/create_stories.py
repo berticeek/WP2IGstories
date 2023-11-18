@@ -45,7 +45,7 @@ def get_story_template(site: str) -> Template:
     ).model_dump()
 
 
-def get_post_elements(number: int, post, template) -> ImageElements:
+def get_post_elements(number: int, post: PostData, template: Template) -> ImageElements:
     canvas_size = Canvas(width=template.canvas["width"], height=template.canvas["height"])
     
     if template.background["from_cover"]:
@@ -94,14 +94,15 @@ def get_post_elements(number: int, post, template) -> ImageElements:
             images=template.elements["images"],
             shapes=shapes,
             texts=texts,
+            post_url=post.link
         ).model_dump())
 
 
-def store_metadata(post: PostData, elements: ImageElements) -> Dict:
+def store_metadata(elements: ImageElements) -> Dict:
     texts = [x.text for x in elements.texts]
     return {
         "number": elements.number,
-        "url": f"{post['link']}",
+        "url": f"{elements.post_url}",
         "image": f"{elements.background.path}",
         "image_position_x":f"{elements.background.position[0]}",
         "texts": texts,
@@ -183,11 +184,11 @@ def create_stories(site: str, posts_elements: List[ImageElements]) -> List:
             os.mkdir(output_folder)
             
         with open(output_folder / "links.txt", "a") as links:
-            links.write(f"{elems.number}: {elems.link}\n")
+            links.write(f"{elems.number}: {elems.post_url}\n")
         
         # if not recreate:           
             # metadata.append(store_metadata(post, post_elements))
-        metadata.append(store_metadata(elems, elems))
+        metadata.append(store_metadata(elems))
         
     # write_metadata_file(metadata, site)
 
