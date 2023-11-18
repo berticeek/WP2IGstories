@@ -47,14 +47,23 @@
                     })
                     .then(response => response.json())
                     .then(postsData => {
-                        data_posts = postsData;
+                        data_posts = JSON.stringify(postsData);
                         return fetch(`/get_stories_template?site=${site}`, {
                             method: "GET"
                         });
                     })
                     .then(response => response.json())
                     .then(templateData => {
-                        template = templateData;
+                        template = JSON.stringify(templateData);
+                        console.log("POSTS:", data_posts);
+                        console.log("TEMPLATE:", template);
+                        return fetch(`/get_posts_elements?posts=${data_posts}&template=${template}`, {
+                            method: "GET"
+                        });
+                    })
+                    .then(response => response.json())
+                    .then(postsElementsList => {
+                        posts_elements = postsElementsList;
                         return fetch(`/create_images`, {
                             method: "POST",
                             headers: {
@@ -62,8 +71,7 @@
                             },
                             body: JSON.stringify({
                                 site: site,
-                                posts: data_posts,
-                                template: template,
+                                posts_elements: posts_elements,
                             }),
                         });
                     })
