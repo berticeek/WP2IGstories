@@ -151,7 +151,7 @@ def recreate_get_posts_data(metadata):
     return posts
         
 
-def create_stories(site: str, posts_elements: List[PostData]) -> List:
+def create_stories(site: str, posts_elements: List[ImageElements]) -> List:
     clear_files(site)
 
     # if recreate:
@@ -170,24 +170,24 @@ def create_stories(site: str, posts_elements: List[PostData]) -> List:
     metadata = []
     
     # story_template = get_story_template(site)
-    for post in posts_elements:
+    for elems in posts_elements:
         # post_elements = get_post_elements(number, post, story_template)
 
         # if recreate:
         #     post_elements = adjust_elements(post_elements, metadata[post_elements.number])
 
-        create_story(post, site)
+        create_story(elems, site)
         
         output_folder = PROJECT_FOLDER / "stories" / site
         if not os.path.isdir(output_folder):
             os.mkdir(output_folder)
             
         with open(output_folder / "links.txt", "a") as links:
-            links.write(f"{post['number']}: {post['link']}\n")
+            links.write(f"{elems.number}: {elems.link}\n")
         
         # if not recreate:           
             # metadata.append(store_metadata(post, post_elements))
-        metadata.append(store_metadata(post, post))
+        metadata.append(store_metadata(elems, elems))
         
     # write_metadata_file(metadata, site)
 
