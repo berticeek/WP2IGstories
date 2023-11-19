@@ -6,6 +6,10 @@ SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent
 
 
+def project_folder() -> Path:
+    return PROJECT_FOLDER
+
+
 def template_path(site: str) -> str:
     return PROJECT_FOLDER / "data" / site / "template.yaml"
 
