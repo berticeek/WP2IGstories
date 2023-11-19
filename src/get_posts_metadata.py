@@ -9,6 +9,9 @@ from urllib.parse import urlparse, urljoin
 from file_paths import template_path, predef_posts_file
 
 
+POSTS_NUMBER = 5
+
+
 def get_api_url(site: str) -> str:
     with open(template_path(site)) as template:
         template = yaml.safe_load(template)
@@ -55,7 +58,9 @@ class Posts:
             return None
 
 
-def get_valid_posts(api_url: str) -> List:
+def get_valid_posts(api_url: str, pre_posts_len: int) -> List:
+    num_newest_posts = POSTS_NUMBER - pre_posts_len
+    
     exclude_tags = "generaciarapu"
     
     posts = Posts(api_url)
@@ -68,7 +73,7 @@ def get_valid_posts(api_url: str) -> List:
         if posts.has_wrong_tag(post["tags"], exclude_tags):
             posts_list.remove(post)
             
-    return posts_list[:5]
+    return posts_list[:num_newest_posts]
 
 
 def check_predefined_posts(site: str, posts: List) -> List:
@@ -117,16 +122,34 @@ def get_post_data(url, post) -> PostData:
         title = post["title"]["rendered"],
         link = post["link"],
         cover = post_cover
-    )
+    ).model_dump()
 
 
-def get_posts_metadata(site: str) -> List[PostData]:
+def get_posts_metadata(site: str, links: List) -> List[PostData]:
     api_url = get_api_url(site)
     
-    posts = get_valid_posts(api_url)
-    posts = check_predefined_posts(site, posts)
+    pre_posts = []
+    
+    if links:
+        for link in links:
+            pre_posts.append(get_single_post(api_url, link))
+    
+    
+    posts = pre_posts + get_valid_posts(api_url, len(pre_posts))
+    # posts = check_predefined_posts(site, posts)
     posts_data = []  
     for post in posts:
         posts_data.append(get_post_data(api_url, post))
     return posts_data    
          
+
+def modify_posts_metadata(metadata):
+    posts = []
+    for post_data in metadata:
+        posts.append(
+            PostData(
+                title = "",
+                link = post_data["url"],
+                cover = post_data["image"]
+        ).model_dump())
+    return posts

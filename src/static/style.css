@@ -1,0 +1,132 @@
+body {
+  background-color: #f4f4f4; /* Optional background color */
+  justify-items: center;
+}
+body button {
+  background-color: #6FA1D1;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+body button:hover {
+  background-color: #4B8AC9;
+}
+
+.cont-main-page {
+  flex-direction: column;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 80%;
+  margin: auto;
+  padding: 50px 0;
+}
+.container h1 {
+  font-family: "Arial", sans-serif;
+  color: #333;
+}
+.container #create-stories-form form {
+  margin-top: 20px; /* Adjust the margin as needed */
+  text-align: center;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.container #create-stories-form form label {
+  display: block;
+  margin-bottom: 10px;
+}
+.container #create-stories-form form select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+.container #create-stories-form form input[type=text] {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s, box-shadow 0.3s;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+.container #create-stories-form form input[type=text]:hover {
+  border-color: #007BFF;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+.container #create-stories-form #links-articles .article-link {
+  display: block;
+  margin: 10px 0;
+}
+.container #create-stories-form .add-more-button {
+  background-color: #c1d1e0;
+  display: block;
+  margin: auto;
+  margin-bottom: 10px;
+  color: #656c74;
+  font-weight: bolder;
+  border: none;
+  padding: 4px 10px;
+  font-size: 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+.container #create-stories-form .add-more-button:hover {
+  background-color: #6FA1D1;
+  color: #fff;
+}
+.container #stories-container {
+  text-align: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 40px;
+}
+.container #stories-container .story {
+  display: flex;
+  align-items: center;
+}
+.container #stories-container .story .story-image {
+  width: 300px;
+  max-width: 100%;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.container #stories-container .story .metadata {
+  width: 500px;
+  margin-bottom: 20px;
+  margin-right: 50px;
+}
+.container #stories-container .story .metadata label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.container #stories-container .story .metadata input[type=text],
+.container #stories-container .story .metadata textarea {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s, box-shadow 0.3s;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+.container #stories-container .story .metadata input[type=text]:hover,
+.container #stories-container .story .metadata textarea:hover {
+  border-color: #007BFF;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+.container #stories-container .story .metadata input[type=text] {
+  width: 100px;
+}/*# sourceMappingURL=style.css.map */

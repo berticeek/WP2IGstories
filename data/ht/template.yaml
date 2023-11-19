@@ -16,7 +16,7 @@
     images:
     - image: "logo"
       from_cover: False
-      path: "media/ht/logo.png"
+      path: "${W2I_PATH}/media/ht/logo.png"
       size:
       - 150
       - 150
@@ -40,7 +40,7 @@
       - 1194
     texts:
     - 
-      font: "media/ht/fonts/Montserrat-ExtraBold.ttf"
+      font: "${W2I_PATH}/media/ht/fonts/Montserrat-ExtraBold.ttf"
       font_size: 53
       align: "center"
       color: "black"
