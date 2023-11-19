@@ -142,3 +142,14 @@ def get_posts_metadata(site: str, links: List) -> List[PostData]:
         posts_data.append(get_post_data(api_url, post))
     return posts_data    
          
+
+def modify_posts_metadata(metadata):
+    posts = []
+    for post_data in metadata:
+        posts.append(
+            PostData(
+                title = "",
+                link = post_data["url"],
+                cover = post_data["image"]
+        ).model_dump())
+    return posts

@@ -58,20 +58,58 @@
     
                     storiesData.push(storyData);
                 });
-    
-                $.ajax({
-                    url: '/recreate',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ 'metadata': storiesData, 'site': site }),
-                    success: function (response) {
-                        console.log(response);
-                        window.location.href = response.redirect_url;
+
+                fetch(`/recreate_posts_metadata`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
                     },
-                    error: function (error) {
-                        console.error(error);
-                    }
-                });
+                    body: JSON.stringify({
+                        data_stories: storiesData
+                    }),
+                })
+                .then(response => response.json())
+                .then(postsData => {
+                    data_posts = JSON.stringify(postsData);
+                    return fetch(`/get_stories_template?site=${site}`, {
+                        method: "GET"
+                    });
+                })
+                .then(response => response.json())
+                .then(templateData => {
+                    template = JSON.stringify(templateData);
+                    console.log("POSTS:", data_posts);
+                    console.log("TEMPLATE:", template);
+                    return fetch(`/get_posts_elements?posts=${data_posts}&template=${template}`, {
+                        method: "GET"
+                    });
+                })
+                .then(response => response.json())
+                .then(postsElementsList => {
+                    posts_elements = JSON.stringify(postsElementsList);
+                    return fetch(`/adjust_posts_elements?elements=${posts_elements}&metadata=${JSON.stringify(storiesData)}`, {
+                        method: "GET"
+                    });
+                })
+                .then(response => response.json())
+                .then(adjustedPostsElementsList => {
+                    adjusted_posts_elements = adjustedPostsElementsList;
+                    console.log("Adjusted posts elements: ", adjusted_posts_elements)
+                    return fetch(`/create_images`, {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            site: site,
+                            posts_elements: adjusted_posts_elements,
+                        }),
+                    });
+                })
+                .then(response => response.json())
+                .then(result => {
+                    window.location.href = `/show_images?site=${site}`;
+                })
             });
         });
     </script>

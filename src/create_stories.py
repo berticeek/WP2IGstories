@@ -28,8 +28,6 @@ class Template(BaseModel):
 
 
 def get_story_template(site: str) -> Template:
-    # with open(template_path(site)) as template:
-        # template = yaml.safe_load(template)
     template = EnvYAML(template_path(site))
     
     if "texts" in template["elements"]:
@@ -137,46 +135,15 @@ def adjust_elements(elements: ImageElements, metadata) -> ImageElements:
     
     elements.background.position[0] = metadata["image_position_x"]
         
-    return elements
-
-
-def recreate_get_posts_data(metadata):
-    posts = []
-    for post_data in metadata:
-        posts.append(
-            PostData(
-                title = "",
-                link = post_data["url"],
-                cover = post_data["image"]
-        ))
-    return posts
+    return elements.model_dump()
         
 
 def create_stories(site: str, posts_elements: List[ImageElements]) -> List:
     clear_files(site)
-
-    # if recreate:
-    #     posts = []
-    #     for post_data in metadata:
-    #         posts.append(
-    #             PostData(
-    #                 title = "",
-    #                 link = post_data["url"],
-    #                 cover = post_data["image"]
-    #             ))
-    # else:
-    #     posts = get_posts_metadata(site)
-    #     metadata = []  
     
     metadata = []
     
-    # story_template = get_story_template(site)
     for elems in posts_elements:
-        # post_elements = get_post_elements(number, post, story_template)
-
-        # if recreate:
-        #     post_elements = adjust_elements(post_elements, metadata[post_elements.number])
-
         create_story(elems, site)
         
         output_folder = PROJECT_FOLDER / "stories" / site
@@ -185,12 +152,8 @@ def create_stories(site: str, posts_elements: List[ImageElements]) -> List:
             
         with open(output_folder / "links.txt", "a") as links:
             links.write(f"{elems.number}: {elems.post_url}\n")
-        
-        # if not recreate:           
-            # metadata.append(store_metadata(post, post_elements))
+
         metadata.append(store_metadata(elems))
-        
-    # write_metadata_file(metadata, site)
 
     return metadata
         

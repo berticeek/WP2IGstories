@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory, session
 
-from create_stories import create_stories, get_story_template, get_elements
-from get_posts_metadata import get_posts_metadata
+from create_stories import create_stories, get_story_template, get_elements, adjust_elements
+from get_posts_metadata import get_posts_metadata, modify_posts_metadata
 
 from create_stories import Template, PostData, ImageElements
 
@@ -55,8 +55,24 @@ def get_posts_elements():
     
     template_json = json.loads(request.args.get("template"))
     template = Template.model_validate(template_json)
+    
     posts_elements = get_elements(posts, template)
     return jsonify(posts_elements)
+
+
+@app.route("/adjust_posts_elements", methods=["GET"])
+def adjust_posts_elements():
+    elements_json = json.loads(request.args.get("elements"))
+    elements = [ImageElements.model_validate(x) for x in elements_json]
+    
+    metadata = json.loads(request.args.get("metadata"))
+    # metadata = [PostData.model_validate(x) for x in metadata_json]
+    
+    adjusted_elements = []
+    for image_elements, image_metadata in zip(elements, metadata):
+        adjusted_elements.append(adjust_elements(image_elements, image_metadata))
+        
+    return jsonify(adjusted_elements)    
 
 
 @app.route("/create_images", methods=["POST"])
@@ -77,7 +93,6 @@ def show_images():
     site = request.args.get("site")
     metadata = session.get("stories_metadata", {})
     
-    # images = [str(x["number"]) + ".png" for x in metadata]
     return render_template("stories.html", stories=metadata, site=site)
 
 
@@ -87,14 +102,15 @@ def uploaded_file(site, filename):
     return send_from_directory(upload_folder, filename)
 
 
-@app.route("/recreate", methods=["POST"])
-def recreate():
+@app.route("/recreate_posts_metadata", methods=["POST"])
+def recreate_posts_metadata():
     data = request.get_json()
-    site = data['site']
-    metadata = data['metadata']
-    new_metadata = create_stories(site, recreate=True, metadata=metadata)
-    session["stories_metadata"] = new_metadata
-    return jsonify({'redirect_url': url_for("show_images", site=site)})
+    metadata = data['data_stories']
+    # metadata = [PostData.model_validate(x) for x in metadata_json]
+    
+    new_metadata = modify_posts_metadata(metadata)
+    # session["stories_metadata"] = new_metadata
+    return jsonify(new_metadata)
     
 
 if __name__ == "__main__":
