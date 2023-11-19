@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory, session
+from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory, session, send_file
 
 from create_stories import create_stories, get_story_template, get_elements, adjust_elements
 from get_posts_metadata import get_posts_metadata, modify_posts_metadata
 
 from create_stories import Template, PostData, ImageElements
+
+from file_paths import project_folder
 
 import os
 import tempfile
@@ -11,20 +13,13 @@ import shutil
 import time
 import secrets
 import json
-
-# def create_tmp_dir():
-#     return tempfile.mkdtemp
-
-
-# def delete_tmp_dir(tmp_dir):
-#     shutil.rmtree(tmp_dir)
+from zipfile import ZipFile
 
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
 
 script_dir = os.getcwd()
-# script_parent_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
 app.config["UPLOAD_FOLDER"] = os.path.join(script_dir, "stories")
 
 
@@ -66,7 +61,6 @@ def adjust_posts_elements():
     elements = [ImageElements.model_validate(x) for x in elements_json]
     
     metadata = json.loads(request.args.get("metadata"))
-    # metadata = [PostData.model_validate(x) for x in metadata_json]
     
     adjusted_elements = []
     for image_elements, image_metadata in zip(elements, metadata):
@@ -106,11 +100,27 @@ def uploaded_file(site, filename):
 def recreate_posts_metadata():
     data = request.get_json()
     metadata = data['data_stories']
-    # metadata = [PostData.model_validate(x) for x in metadata_json]
     
     new_metadata = modify_posts_metadata(metadata)
-    # session["stories_metadata"] = new_metadata
     return jsonify(new_metadata)
+    
+
+@app.route("/download_stories", methods=["GET"])
+def download_stories():    
+    site = request.args.get("site");
+    stories_path = project_folder() / "stories" / site
+    zip_filename = "%s_stories.zip" % site
+    zip_stories_path = stories_path.parent / zip_filename
+    
+    shutil.make_archive(os.path.splitext(zip_stories_path)[0], "zip", stories_path)
+    
+    try:
+        return send_file(zip_stories_path, as_attachment=True, download_name=zip_filename)
+    except:
+        pass
+        # Handle error
+    finally:
+        os.remove(zip_stories_path)
     
 
 if __name__ == "__main__":

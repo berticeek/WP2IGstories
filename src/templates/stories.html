@@ -28,6 +28,7 @@
             </div>
             {% endfor %}
             <button type="button" id="recreate">Pregenerovať storky</button>
+            <button type="button" id="download_stories">Stiahnuť zip</button>
         </div>
     </div>
 
@@ -111,6 +112,11 @@
                     window.location.href = `/show_images?site=${site}`;
                 })
             });
+
+            $("#download_stories").click(function() {
+                var site = "{{ site }}";
+                window.location.href = `/download_stories?site=${site}`;
+            })
         });
     </script>
 
