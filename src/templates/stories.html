@@ -29,6 +29,9 @@
             {% endfor %}
             <button type="button" id="recreate">Pregenerovať storky</button>
             <button type="button" id="download_stories">Stiahnuť zip</button>
+            <form method="post" action="" id="send_mail_form">
+                <button type="submit" id="send_mail_button">Odoslať mailom</button>
+            </form>
         </div>
     </div>
 
@@ -116,7 +119,23 @@
             $("#download_stories").click(function() {
                 var site = "{{ site }}";
                 window.location.href = `/download_stories?site=${site}`;
-            })
+            });
+
+            $("#send_mail_button").click(function() {
+                var links = [];
+                var site = "{{ site }}";
+                $('.story').each(function () {
+                    links.push($(this).data('url'));
+                });
+                console.log("send mail - links: ", links);
+
+                var formAction = `/send_by_email?site=${site}&links=${JSON.stringify(links)}`;
+
+                $("#send_mail_form").attr("action", formAction);
+
+                $("#send_mail_form").submit();
+
+            });
         });
     </script>
 
