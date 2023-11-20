@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory, session, send_file
+from flask_mail import Mail, Message
 
 from create_stories import create_stories, get_story_template, get_elements, adjust_elements
 from get_posts_metadata import get_posts_metadata, modify_posts_metadata
@@ -13,8 +14,8 @@ import shutil
 import time
 import secrets
 import json
+import yaml
 from zipfile import ZipFile
-
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
@@ -22,6 +23,25 @@ app.secret_key = secrets.token_hex(16)
 script_dir = os.getcwd()
 app.config["UPLOAD_FOLDER"] = os.path.join(script_dir, "stories")
 
+
+def get_mail_credentials() -> dict:
+    """Should be changed when deployed to use some other SMTP server"""
+    
+    with open(project_folder() / "email_conf.yaml", "r") as yamlf:
+        credentials = yaml.safe_load(yamlf)
+    return({
+        "mail_addr": credentials["mail_address"],
+        "mail_passwd": credentials["app_password"]
+    })
+
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = get_mail_credentials()["mail_addr"]
+app.config['MAIL_PASSWORD'] = get_mail_credentials()["mail_passwd"]
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+     
+mail = Mail(app)
 
 @app.route("/")
 def index():
@@ -122,6 +142,24 @@ def download_stories():
     finally:
         os.remove(zip_stories_path)
     
+    
+@app.route("/send_by_email", methods=["POST"])
+def send_by_email():
+    recipient_mail = "patrik.albert5@gmail.com"
+    site = request.args.get("site")
+    links = json.loads(request.args.get("links"))
+    
+    msg = Message(f"Storkokreátor 3000", sender=get_mail_credentials()["mail_addr"], recipients=[recipient_mail])
+    msg.html = render_template("stories_email.html", site=site, links=links)
+    
+    stories_path = project_folder() / "stories" / site
+    png_files = [png for png in os.listdir(stories_path) if os.path.splitext(png)[1] == ".png"]
+    for story_file in png_files:
+        with app.open_resource(stories_path / story_file) as png_f:
+            msg.attach(story_file, "application/png", png_f.read())
+    
+    mail.send(message=msg)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
