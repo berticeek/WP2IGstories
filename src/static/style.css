@@ -26,10 +26,24 @@ body button:hover {
   width: 80%;
   margin: auto;
   padding: 50px 0;
+  flex-direction: column;
 }
 .container h1 {
   font-family: "Arial", sans-serif;
   color: #333;
+}
+.container .action-buttons {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  margin-top: 50px;
+}
+.container .action-buttons .buttons-inrow {
+  display: flex;
+  gap: 20px;
+}
+.container .action-buttons .buttons-inrow button {
+  width: 170px;
 }
 .container #create-stories-form form {
   margin-top: 20px; /* Adjust the margin as needed */

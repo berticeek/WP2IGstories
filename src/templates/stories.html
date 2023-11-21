@@ -27,12 +27,17 @@
                     alt="{{ story['number'] ~ '.png' }}" class="story-image">
             </div>
             {% endfor %}
-            <button type="button" id="recreate">Pregenerovať storky</button>
-            <button type="button" id="download_stories">Stiahnuť zip</button>
-            <form method="post" action="" id="send_mail_form">
-                <button type="submit" id="send_mail_button">Odoslať mailom</button>
-            </form>
         </div>
+        <div class="action-buttons">
+            <button type="button" id="recreate">Pregenerovať storky</button>
+            <div class="buttons-inrow">
+                <button type="button" id="download_stories">Stiahnuť zip</button>
+                <form method="post" action="" id="send_mail_form">
+                    <button type="submit" id="send_mail_button">Odoslať mailom</button>
+                </form>
+            </div>
+        </div>
+
     </div>
 
     <script>

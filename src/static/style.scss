@@ -29,11 +29,27 @@ body {
     width: 80%;
     margin: auto;
     padding: 50px 0;
+    flex-direction: column;
     // border:1px solid red;
 
     h1 {
         font-family: 'Arial', sans-serif;
         color: #333;
+    }
+
+    .action-buttons{
+        display: flex;
+        gap: 20px;
+        flex-direction: column;
+        margin-top: 50px;
+        .buttons-inrow{
+            display: flex;
+            gap: 20px;
+            
+            button{
+                width: 170px;
+            }
+        }
     }
 
     #create-stories-form{
@@ -102,7 +118,6 @@ body {
         align-items: center;
         flex-direction: column;
         gap: 40px;
-    
         .story{
             display: flex;
             align-items: center;
@@ -148,5 +163,6 @@ body {
         }
     }
 }
+
 
 
