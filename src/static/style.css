@@ -143,4 +143,23 @@ body button:hover {
 }
 .container #stories-container .story .metadata input[type=text] {
   width: 100px;
+}
+.container .modal .modal-body {
+  text-align: center;
+}
+.container .modal .modal-body input[type=email] {
+  width: 80%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+.container .modal .modal-body input[type=email]:hover {
+  border-color: #007BFF;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+.container .modal .modal-footer {
+  justify-content: center;
 }/*# sourceMappingURL=style.css.map */
