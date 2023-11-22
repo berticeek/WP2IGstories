@@ -92,6 +92,28 @@ body {
                 margin: 10px 0;
             }
         }
+        #posts-number-selector{
+            .all-posts-check,
+            .number-of-posts{
+                display: flex;
+                flex-direction: row;
+                justify-content:space-between;
+                padding: 15px 0;
+                input[type="checkbox"]{
+                    margin: auto 0;
+                }
+                label{
+                    margin: auto 0;
+                }
+                input[type="number"]{
+                    width: 50px;
+                }
+            }
+            #postsNumber{
+                display: none;
+            }
+        }
+
         .add-more-button {
             background-color: #c1d1e0;
             display: block;

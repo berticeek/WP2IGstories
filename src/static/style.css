@@ -80,6 +80,28 @@ body button:hover {
   display: block;
   margin: 10px 0;
 }
+.container #create-stories-form #posts-number-selector .all-posts-check,
+.container #create-stories-form #posts-number-selector .number-of-posts {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 15px 0;
+}
+.container #create-stories-form #posts-number-selector .all-posts-check input[type=checkbox],
+.container #create-stories-form #posts-number-selector .number-of-posts input[type=checkbox] {
+  margin: auto 0;
+}
+.container #create-stories-form #posts-number-selector .all-posts-check label,
+.container #create-stories-form #posts-number-selector .number-of-posts label {
+  margin: auto 0;
+}
+.container #create-stories-form #posts-number-selector .all-posts-check input[type=number],
+.container #create-stories-form #posts-number-selector .number-of-posts input[type=number] {
+  width: 50px;
+}
+.container #create-stories-form #posts-number-selector #postsNumber {
+  display: none;
+}
 .container #create-stories-form .add-more-button {
   background-color: #c1d1e0;
   display: block;

@@ -23,6 +23,16 @@
                         <label for="articles"> Vlož odkazy na články:</label>
                         <input type="text" id="article-link1" name="article-link1" class="article-link">
                     </div>
+                    <div id="posts-number-selector">
+                        <div class="all-posts-check">
+                            <label>Všetky články:</label>
+                            <input type="checkbox" id="allPostsCheckbox" checked>
+                        </div>
+                        <div class="number-of-posts" id="postsNumber">
+                            <label>Počet článkov:</label>
+                            <input type="number">
+                        </div>
+                    </div>
                     <button type="button" onclick="addInput()" class="add-more-button">+</button>
                     <button type="button" id="create">Vytvor storky</button>
                 </form>
@@ -95,6 +105,22 @@
                 input.name = 'article-link' + count;
                 container.appendChild(input);
             }
+
+            function checkIfAllPosts() {
+                const checkbox = document.getElementById('allPostsCheckbox');
+                const inputPostsNumber = document.getElementById('postsNumber');
+
+                checkbox.addEventListener('change', function() {
+                    if (!checkbox.checked) {
+                        inputPostsNumber.style.display = "flex";
+                    } else {
+                        inputPostsNumber.style.display = "none";
+                    }
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', checkIfAllPosts);
+
        </script>
    </body>   
 </html>
