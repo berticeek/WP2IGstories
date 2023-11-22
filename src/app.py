@@ -59,7 +59,9 @@ def get_stories_template():
 def get_posts_data():
     site = request.args.get("site")
     links = list(filter(None, request.args.getlist("links")))
-    posts_data = get_posts_metadata(site, links)
+    posts_number = int(request.args.get("number"))
+    
+    posts_data = get_posts_metadata(site, links, posts_number)
     return jsonify(posts_data)
 
 

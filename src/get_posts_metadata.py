@@ -58,10 +58,10 @@ class Posts:
             return None
 
 
-def get_valid_posts(api_url: str, pre_posts_len: int) -> List:
-    num_newest_posts = POSTS_NUMBER - pre_posts_len
+def get_valid_posts(api_url: str, pre_posts_len: int, number_posts: int) -> List:
+    # num_newest_posts = POSTS_NUMBER - pre_posts_len
     
-    exclude_tags = "generaciarapu"
+    exclude_tags = None
     
     posts = Posts(api_url)
     
@@ -70,10 +70,16 @@ def get_valid_posts(api_url: str, pre_posts_len: int) -> List:
         raise Exception("Nepodarilo sa získať články")
     
     for post in reversed(posts_list):
+        if exclude_tags == None:
+            break
+        
         if posts.has_wrong_tag(post["tags"], exclude_tags):
             posts_list.remove(post)
-            
-    return posts_list[:num_newest_posts]
+    
+    if number_posts != 0:        
+        return posts_list[:number_posts]
+    else:
+        return posts_list
 
 
 def check_predefined_posts(site: str, posts: List) -> List:
@@ -125,7 +131,7 @@ def get_post_data(url, post) -> PostData:
     ).model_dump()
 
 
-def get_posts_metadata(site: str, links: List) -> List[PostData]:
+def get_posts_metadata(site: str, links: List, number_posts: int) -> List[PostData]:
     api_url = get_api_url(site)
     
     pre_posts = []
@@ -135,7 +141,7 @@ def get_posts_metadata(site: str, links: List) -> List[PostData]:
             pre_posts.append(get_single_post(api_url, link))
     
     
-    posts = pre_posts + get_valid_posts(api_url, len(pre_posts))
+    posts = pre_posts + get_valid_posts(api_url, len(pre_posts), number_posts)
     # posts = check_predefined_posts(site, posts)
     posts_data = []  
     for post in posts:

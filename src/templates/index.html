@@ -31,7 +31,7 @@
                         </div>
                         <div class="number-of-posts" id="postsNumber">
                             <label>Počet článkov:</label>
-                            <input type="number">
+                            <input type="number" id="inputPostsNum">
                         </div>
                     </div>
                     <button type="button" id="create">Vytvor storky</button>
@@ -44,6 +44,12 @@
                $("#create").click(function(){
                     var site = $('#site').val();
                     var links = []
+
+                    const checkbox = document.getElementById('allPostsCheckbox');
+                    var postsNum = 0
+                    if (!checkbox.checked){
+                        postsNum = $('#inputPostsNum').val();
+                    }
                     
                     $('.article-link').each(function() {
                         links.push($(this).val());
@@ -51,8 +57,9 @@
 
                     console.log("Site:", site);
                     console.log("Links:", links);
+                    console.log("Number:", postsNum);
                     
-                    fetch(`/get_posts_data?site=${site}&links=${links}`, {
+                    fetch(`/get_posts_data?site=${site}&links=${links}&number=${postsNum}`, {
                         method: "GET"
                     })
                     .then(response => response.json())
