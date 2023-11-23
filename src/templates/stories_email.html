@@ -1,7 +1,6 @@
 <body>
-    <p>Tento mail je automaticky vygenerovaný Storkokreátorom 3000.</p>
     <h3>{{ site }}:</h3>
     {% for link in links %}
-        <p>{{ link }}</p>
+        <p>{{loop.index}}: {{ link }}</p>
     {% endfor %}
 </body>
