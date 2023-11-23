@@ -16,7 +16,6 @@ import secrets
 import json
 import yaml
 from zipfile import ZipFile
-from urllib.parse import unquote
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
@@ -151,8 +150,7 @@ def send_by_email():
     # recipient_mail = "patrik.albert5@gmail.com"
     data = request.get_json()
     site = data["site"]
-    links_encoded = data["links"]
-    links = [unquote(x) for x in links_encoded]
+    links = data["links"]
     recipient_mail = data["mail"]
     
     msg = Message(f"Storkoprístroj 3000", sender=get_mail_credentials()["mail_addr"], recipients=[recipient_mail])

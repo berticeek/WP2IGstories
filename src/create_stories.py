@@ -1,11 +1,9 @@
 from pathlib import Path
 import yaml
 from envyaml import EnvYAML
-import json
 from typing import Dict, List, Tuple, Optional
 import os
 from argparse import ArgumentParser
-from urllib.parse import quote
 
 from get_posts_metadata import get_posts_metadata
 from get_posts_metadata import PostData
@@ -27,13 +25,6 @@ class Template(BaseModel):
     elements: Dict
     background: Dict
     texts_config: Optional[List]
-    link_suffix: str | None
-
-
-def suffix_in_template(site):
-    with open(template_path(site)) as template:
-        template = yaml.safe_load(template)
-    return template["url"]
 
 
 def get_story_template(site: str) -> Template:
@@ -44,17 +35,11 @@ def get_story_template(site: str) -> Template:
     else: 
         text_config = None
     
-    if "link_suffix" in template:
-        suffix = quote(template["link_suffix"])
-    else:
-        suffix = None
-    
     return Template(
         canvas = template["canvas"],
         elements = template["elements"],
         background = template["elements"]["background"],
         texts_config = texts_config,
-        link_suffix=suffix
     ).model_dump()
 
 
@@ -74,11 +59,6 @@ def get_post_elements(number: int, post: PostData, template: Template) -> ImageE
         shapes=template.elements["shapes"]
     else:
         shapes=None
-    
-    if template.link_suffix:
-        link = quote(post.link + template.link_suffix)
-    else:
-        link = post.link
         
     texts = []   
     for text_conf in template.texts_config:
@@ -112,7 +92,7 @@ def get_post_elements(number: int, post: PostData, template: Template) -> ImageE
             images=template.elements["images"],
             shapes=shapes,
             texts=texts,
-            post_url=link
+            post_url=post.link
         ).model_dump())
 
 
