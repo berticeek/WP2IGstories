@@ -75,8 +75,8 @@ def get_post_elements(number: int, post: PostData, template: Template) -> ImageE
     else:
         shapes=None
     
-    if template.link_suffix:
-        link = quote(post.link + template.link_suffix)
+    if template.link_suffix and template.link_suffix not in post.link:
+        link = post.link + template.link_suffix
     else:
         link = post.link
         
@@ -112,7 +112,7 @@ def get_post_elements(number: int, post: PostData, template: Template) -> ImageE
             images=template.elements["images"],
             shapes=shapes,
             texts=texts,
-            post_url=link
+            post_url=quote(link)
         ).model_dump())
 
 
@@ -154,6 +154,8 @@ def adjust_elements(elements: ImageElements, metadata) -> ImageElements:
         elements.texts[text_id].text = text
     
     elements.background.position[0] = metadata["image_position_x"]
+    
+    elements.post_url = quote(elements.post_url)
         
     return elements.model_dump()
         

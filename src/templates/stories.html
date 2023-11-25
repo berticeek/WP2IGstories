@@ -22,6 +22,7 @@
                     <label>Text:</label>
                     <textarea name="text" rows="3">{{ text }}</textarea>
                     {% endfor %}
+                    <a href="{{ story['url']|url_decode }}">{{ story['url']|url_decode }}</a>
                 </div>
                 <img src="{{ url_for('uploaded_file', site=site, filename=story['number'] ~ '.png') }}"
                     alt="{{ story['number'] ~ '.png' }}" class="story-image">
@@ -85,8 +86,6 @@
                 .then(response => response.json())
                 .then(templateData => {
                     template = JSON.stringify(templateData);
-                    console.log("POSTS:", data_posts);
-                    console.log("TEMPLATE:", template);
                     return fetch(`/get_posts_elements?posts=${data_posts}&template=${template}`, {
                         method: "GET"
                     });
@@ -101,7 +100,6 @@
                 .then(response => response.json())
                 .then(adjustedPostsElementsList => {
                     adjusted_posts_elements = adjustedPostsElementsList;
-                    console.log("Adjusted posts elements: ", adjusted_posts_elements)
                     return fetch(`/create_images`, {
                         method: "POST",
                         headers: {
@@ -136,7 +134,6 @@
                     $('.story').each(function () {
                         links.push($(this).data('url'));
                     });
-                    console.log("send mail - links: ", links);
 
                     fetch(`/send_by_email`, {
                         method: "POST",

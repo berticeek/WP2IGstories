@@ -34,7 +34,13 @@ def get_mail_credentials() -> dict:
         "mail_addr": credentials["mail_address"],
         "mail_passwd": credentials["app_password"]
     })
+    
+    
+def url_decode(value):
+    return unquote(value)
 
+app.jinja_env.filters['url_decode'] = url_decode
+    
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = get_mail_credentials()["mail_addr"]
