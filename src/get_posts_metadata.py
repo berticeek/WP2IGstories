@@ -107,7 +107,8 @@ def _get_post_cover(api_url):
         result = response.json()
         return result["link"]
     else:
-        raise Exception(response.text, response.status_code)
+        # raise Exception(response.text, response.status_code)
+        return None
 
 
 def get_single_post(api_url: str, post_url: str) -> Dict:
@@ -131,6 +132,9 @@ def get_post_data(url, post) -> PostData:
     else:
         title = post["title"]["rendered"]
     
+    if None in [title, post_cover]:
+        return None
+    
     return PostData(
         title = title,
         link = post["link"],
@@ -152,7 +156,9 @@ def get_posts_metadata(site: str, links: List, number_posts: int) -> List[PostDa
     # posts = check_predefined_posts(site, posts)
     posts_data = []  
     for post in posts:
-        posts_data.append(get_post_data(api_url, post))
+        post_data = get_post_data(api_url, post)
+        if post_data:
+            posts_data.append(post_data)
     return posts_data    
          
 
