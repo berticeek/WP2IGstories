@@ -5,6 +5,7 @@ from pydantic import BaseModel
 import yaml
 import os
 from urllib.parse import urlparse, urljoin
+from html import unescape
 
 from file_paths import template_path, predef_posts_file
 
@@ -124,8 +125,14 @@ def get_post_data(url, post) -> PostData:
     media_id = post["featured_media"]
     media_api_url = f"{url}/media/{media_id}"
     post_cover = _get_post_cover(media_api_url)
+    
+    if "&#" in post["title"]["rendered"]:
+        title = unescape(post["title"]["rendered"])
+    else:
+        title = post["title"]["rendered"]
+    
     return PostData(
-        title = post["title"]["rendered"],
+        title = title,
         link = post["link"],
         cover = post_cover
     ).model_dump()
