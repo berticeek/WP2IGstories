@@ -90,6 +90,7 @@ def get_post_elements(number: int, post: PostData, template: Template) -> ImageE
             text=text,
             font=text_conf["font"],
             font_size=text_conf["font_size"],
+            letter_case=text_conf["letter_case"],
             align=text_conf["align"],
             color=text_conf["color"],
             y_axis=text_conf["y_axis"],

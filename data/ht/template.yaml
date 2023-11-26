@@ -42,6 +42,7 @@
     - 
       font: "${W2I_PATH}/media/ht/fonts/Montserrat-ExtraBold.ttf"
       font_size: 53
+      letter_case: "standard"
       align: "center"
       color: "black"
       y_axis: 1370

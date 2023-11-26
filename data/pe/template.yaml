@@ -28,6 +28,7 @@
     - text: "ZMEŇ\nNÁDPIS:"
       font: "${W2I_PATH}/media/pe/fonts/Raleway-Black.ttf"
       font_size: 94
+      letter_case: "uppercase"
       align: "left"
       color: "black"
       y_axis: 1123
@@ -38,6 +39,7 @@
     - 
       font: "${W2I_PATH}/media/pe/fonts/Raleway-SemiBold.ttf"
       font_size: 47
+      letter_case: "standard"
       align: "left"
       color: "black"
       y_axis: 1366

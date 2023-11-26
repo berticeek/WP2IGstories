@@ -17,6 +17,7 @@ class Text(BaseModel):
     text: str
     font: Optional[str]
     font_size: Optional[int]
+    letter_case: str
     align: Optional[str]
     color: Optional[str | int]
     y_axis: int
@@ -120,8 +121,13 @@ def _add_text(image, text):
     else:
         x_pos = x_axis
         
+    text_str = text.text
+        
+    if text.letter_case == "uppercase":
+        text_str = text_str.upper()
+        
     font_size = text.font_size
-    message = split_text(text.text, text.word_wrap)
+    message = split_text(text_str, text.word_wrap)
     font = ImageFont.truetype(text.font, text.font_size)
     align = text.align
     fill = text.color
