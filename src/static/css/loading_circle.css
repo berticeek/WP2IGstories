@@ -32,7 +32,7 @@
   animation: spin 3s linear infinite;
 }
 
-.ready-laoder #loader-circle {
+.ready-loader #loader-circle {
   stroke-dashoffset: 66;
   stroke: #63bc01;
 }
