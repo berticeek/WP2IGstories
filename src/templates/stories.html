@@ -31,7 +31,8 @@
             {% endfor %}
         </div>
         <div class="action-buttons">
-            <button type="button" id="recreate">Pregenerovať storky</button>
+            <button type="button" id="recreate" data-toggle="modal" data-target="#loadingModal">Pregenerovať storky</button>
+            {% include 'loading_modal.html' %}
             <div class="buttons-inrow">
                 <button type="button" id="download_stories">Stiahnuť zip</button>
                 <button type="button" id="send_mail_button" data-toggle="modal" data-target="#enterEmail">Odoslať mailom</button>
