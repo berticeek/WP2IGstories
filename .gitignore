@@ -8,3 +8,4 @@ stories/*/*
 .vscode
 __pycache__
 !stories/*/stories.yaml
+email_conf.yaml
