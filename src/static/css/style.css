@@ -166,6 +166,10 @@ body button:hover {
 .container #stories-container .story .metadata input[type=text] {
   width: 100px;
 }
+.container #stories-container .story .metadata a {
+  display: flex;
+  text-align: left;
+}
 .container .modal .modal-body {
   text-align: center;
 }
