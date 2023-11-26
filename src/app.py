@@ -65,10 +65,13 @@ def get_stories_template():
 @app.route("/get_posts_data", methods=["GET"])
 def get_posts_data():
     site = request.args.get("site")
-    links = list(filter(None, request.args.getlist("links")))
-    posts_number = int(request.args.get("number"))
+    links = list(filter(None, request.args.getlist("links")[0].split(",")))
+    posts_number = request.args.get("number")
     
-    posts_data = get_posts_metadata(site, links, posts_number)
+    if not posts_number and links:
+        posts_number = len(links)
+    
+    posts_data = get_posts_metadata(site, links, int(posts_number))
     return jsonify(posts_data)
 
 

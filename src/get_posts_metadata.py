@@ -78,7 +78,7 @@ def get_valid_posts(api_url: str, pre_posts_len: int, number_posts: int) -> List
             posts_list.remove(post)
     
     if number_posts != 0:        
-        return posts_list[:number_posts]
+        return posts_list[:number_posts - pre_posts_len]
     else:
         return posts_list
 
