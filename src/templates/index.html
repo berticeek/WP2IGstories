@@ -7,6 +7,7 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
       <link rel="stylesheet" href="../static/css/style.css">
+      <link rel="stylesheet" href="../static/css/loading_circle.css">
    </head>
    <body>
         <div class="container cont-main-page">
@@ -34,9 +35,10 @@
                             <input type="number" id="inputPostsNum">
                         </div>
                     </div>
-                    <button type="button" id="create">Vytvor storky</button>
+                    <button type="button" id="create" data-toggle="modal" data-target="#loadingModal">Vytvor storky</button>
                 </form>
             <div>
+            {% include 'loading_modal.html' %}
         </div>
         
        <script src="../static/js/req_create_posts.js"></script>

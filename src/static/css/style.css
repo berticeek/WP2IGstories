@@ -188,4 +188,17 @@ body button:hover {
 }
 .container .modal .modal-footer {
   justify-content: center;
+}
+.container #loadingModal .modal-dialog {
+  width: 150px;
+}
+.container #loadingModal .modal-dialog .modal-content {
+  height: 150px;
+}
+.container #loadingModal .modal-dialog .modal-body {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }/*# sourceMappingURL=style.css.map */
