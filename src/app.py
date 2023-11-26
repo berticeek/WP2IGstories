@@ -164,18 +164,21 @@ def send_by_email():
     links = [unquote(x) for x in links_encoded]
     recipient_mail = data["mail"]
     
-    msg = Message(f"Storkoprístroj 3000", sender=get_mail_credentials()["mail_addr"], recipients=[recipient_mail])
-    msg.html = render_template("stories_email.html", site=site, links=links)
-    
-    stories_path = project_folder() / "stories" / site
-    png_files = [png for png in os.listdir(stories_path) if os.path.splitext(png)[1] == ".png"]
-    for story_file in png_files:
-        with app.open_resource(stories_path / story_file) as png_f:
-            msg.attach(story_file, "application/png", png_f.read())
-    
-    mail.send(message=msg)
-    
-    return jsonify({"status": "success"})
+    try:    
+        msg = Message(f"Storkoprístroj 3000", sender=get_mail_credentials()["mail_addr"], recipients=[recipient_mail])
+        msg.html = render_template("stories_email.html", site=site, links=links)
+        
+        stories_path = project_folder() / "stories" / site
+        png_files = [png for png in os.listdir(stories_path) if os.path.splitext(png)[1] == ".png"]
+        for story_file in png_files:
+            with app.open_resource(stories_path / story_file) as png_f:
+                msg.attach(story_file, "application/png", png_f.read())
+        
+        mail.send(message=msg)
+        return jsonify({"status": "success"})
+    except Exception as e:
+        print(f"Error sending email: {str(e)}")
+        return jsonify({"status": "fail"})
 
 
 if __name__ == "__main__":

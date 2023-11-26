@@ -8,8 +8,20 @@
           </button>
         </div>
         <div class="modal-body">
-          <h5>Zadaj mail</h5>
-          <input type="email" name="input-mail" id="input-mail" required>
+          <div id="mail-pre-send">
+            <h5>Zadaj mail</h5>
+            <input type="email" name="input-mail" id="input-mail" required>
+          </div>
+          <div id="mail-sending" style="display: none;">
+            <!-- loading circle from: https://codepen.io/splitti/pen/jLZjgx -->
+            <svg id="progress_loader" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" xml:space="preserve">
+              <circle id="loader-circle" cx="50" cy="50" r="46" fill="transparent" />
+              <polyline id="loader-tick" points="25,55 45,70 75,33" fill="transparent" />
+            </svg>
+          </div>
+          <div id="mail-sent-fail" style="display: none;">
+            Nepodarilo sa odoslať mail :&#40;
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" id="sendMail">Odoslať</button>
@@ -17,3 +29,5 @@
       </div>
     </div>
   </div>
+
+  <!-- <script src="../static/js/loading_bar.js"></script> -->
