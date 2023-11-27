@@ -1,3 +1,5 @@
+"""Collects all neccessary data and calls function for creating image file out of them"""
+
 from pathlib import Path
 import yaml
 from envyaml import EnvYAML
@@ -23,6 +25,9 @@ PROJECT_FOLDER = SCRIPT_FOLDER.parent
 
 
 class Template(BaseModel):
+    """Configuration of image - 
+    images paths, sizes, positions, all settings for everything in the image"""
+    
     canvas: Dict
     elements: Dict
     background: Dict
@@ -30,25 +35,24 @@ class Template(BaseModel):
     link_suffix: str | None
 
 
-def suffix_in_template(site):
-    with open(template_path(site)) as template:
-        template = yaml.safe_load(template)
-    return template["url"]
-
-
-def get_story_template(site: str) -> Template:
+def get_story_template(site: str) -> dict:
+    """Open template file and load all image settings"""
+    
     template = EnvYAML(template_path(site))
     
+    # Load texts
     if "texts" in template["elements"]:
         texts_config = template["elements"]["texts"]
     else: 
         text_config = None
     
+    # Load url suffix if exists
     if "link_suffix" in template:
         suffix = quote(template["link_suffix"])
     else:
         suffix = None
     
+    # Create template object with configuration
     return Template(
         canvas = template["canvas"],
         elements = template["elements"],
@@ -58,28 +62,37 @@ def get_story_template(site: str) -> Template:
     ).model_dump()
 
 
-def get_post_elements(number: int, post: PostData, template: Template) -> ImageElements:
+def get_post_elements(number: int, post: PostData, template: Template) -> dict:
+    """Put together all image elements with their settings"""
+    
     canvas_size = Canvas(width=template.canvas["width"], height=template.canvas["height"])
     
+    # Use post cover as the background image
     if template.background["from_cover"]:
         bg_path = post.cover
+    # Or specify path to the custom image (not yet feature)
     else:
         bg_path = template.background.path
     
+    # Use image from post (not the background)
     for im_id, image in enumerate(template.elements["images"]):
         if image["from_cover"]:
             template.elements["images"][im_id].update({"path": post.cover})
-            
+    
+    # Include shapes if exist 
     if "shapes" in template.elements:
         shapes=template.elements["shapes"]
     else:
         shapes=None
     
+    # add suffix to the link if exist
+    # add only if it's not been already added - this is important when recreating stories
     if template.link_suffix and template.link_suffix not in post.link:
         link = post.link + template.link_suffix
     else:
         link = post.link
-        
+    
+    # Create list of Text objects with all text parameters 
     texts = []   
     for text_conf in template.texts_config:
         if "text" in text_conf:
@@ -100,6 +113,7 @@ def get_post_elements(number: int, post: PostData, template: Template) -> ImageE
             anchor=text_conf["anchor"]
             ))
     
+    # return dump model so it can be sent in the request
     return (
         ImageElements(
             number=number,
@@ -118,6 +132,12 @@ def get_post_elements(number: int, post: PostData, template: Template) -> ImageE
 
 
 def store_metadata(elements: ImageElements) -> Dict:
+    """
+    Create dict with metadata of the generated image
+    These data are displayed on the show_images page
+    Texts and image position can be changed by recreating image
+    """
+    
     texts = [x.text for x in elements.texts]
     return {
         "number": elements.number,
@@ -125,22 +145,12 @@ def store_metadata(elements: ImageElements) -> Dict:
         "image": f"{elements.background.path}",
         "image_position_x":f"{elements.background.position[0]}",
         "texts": texts,
-        
     }
 
 
-def write_metadata_file(metadata: List[Dict], site: str) -> Path:
-    md_file = PROJECT_FOLDER / "stories" / site / "metadata.yaml"
-    if os.path.isfile(md_file):
-        os.remove(md_file)
-        
-    with open(md_file, "a", encoding="utf-8") as f_metadata:
-        yaml.dump(metadata, f_metadata, default_flow_style=False, allow_unicode=True, sort_keys=False)
-        
-    return md_file
-
-
-def get_elements(posts, template):
+def get_elements(posts: List[PostData], template: Template) -> List:
+    """Create list of elements for each post"""
+    
     post_elements = []
     for number, post in enumerate(posts):
         post_elements.append(get_post_elements(number, post, template))
@@ -148,7 +158,7 @@ def get_elements(posts, template):
         
 
 def adjust_elements(elements: ImageElements, metadata) -> ImageElements:
-    """Adjust text, cover image or its position based on modified metadata.yaml file"""
+    """Adjust text, cover image or its position based on user input"""
     
     # Currently supports only text change and background position
     for text_id, text in enumerate(metadata["texts"]):
@@ -162,17 +172,26 @@ def adjust_elements(elements: ImageElements, metadata) -> ImageElements:
         
 
 def create_stories(site: str, posts_elements: List[ImageElements]) -> List:
+    """Call function for creating image for every single entry in the posts_elements 
+    and return data about created images"""
+    
+    # remove all previously created stories
+    # consider changing it with deleting them always after session's closed, 
+    # or storing them in the tmp dir which is deleted at the session end
     clear_files(site)
     
     metadata = []
     
     for elems in posts_elements:
+        # Create single image
         create_story(elems, site)
         
         output_folder = PROJECT_FOLDER / "stories" / site
         if not os.path.isdir(output_folder):
             os.mkdir(output_folder)
-            
+        
+        # create file with links to posts
+        # needed when downloading stories 
         with open(output_folder / "links.txt", "a") as links:
             links.write(f"{elems.number}: {elems.post_url}\n")
 
