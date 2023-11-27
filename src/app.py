@@ -26,7 +26,7 @@ app.config["UPLOAD_FOLDER"] = os.path.join(script_dir, "stories")
 
 
 def get_mail_credentials() -> dict:
-    """Should be changed when deployed to use some other SMTP server"""
+    """!Should be changed when deployed to use some other SMTP server!"""
     
     with open(project_folder() / "email_conf.yaml", "r") as yamlf:
         credentials = yaml.safe_load(yamlf)
@@ -52,11 +52,15 @@ mail = Mail(app)
 
 @app.route("/")
 def index():
+    """Main page"""
+    
     return render_template("index.html")
 
 
 @app.route("/get_stories_template", methods=["GET"])
 def get_stories_template():
+    """Loads template file and returns stories configuration for selected site"""
+    
     site = request.args.get("site")
     template = get_story_template(site)
     return jsonify(template)
@@ -64,6 +68,11 @@ def get_stories_template():
 
 @app.route("/get_posts_data", methods=["GET"])
 def get_posts_data():
+    """
+    Requests data about posts on selected wordpress site.
+    Includes data about predefined posts if any.
+    """
+    
     site = request.args.get("site")
     links = list(filter(None, request.args.getlist("links")[0].split(",")))
     posts_number = request.args.get("number")
@@ -77,6 +86,8 @@ def get_posts_data():
 
 @app.route("/get_posts_elements", methods=["GET"])
 def get_posts_elements():
+    """From posts metadata and template creates object with data about all elements needed for image creation"""
+    
     posts_json = json.loads(request.args.get("posts"))
     posts = [PostData.model_validate(x) for x in posts_json]
     
@@ -89,6 +100,8 @@ def get_posts_elements():
 
 @app.route("/adjust_posts_elements", methods=["GET"])
 def adjust_posts_elements():
+    """Rewrite posts elements if recreate was requested"""
+    
     elements_json = json.loads(request.args.get("elements"))
     elements = [ImageElements.model_validate(x) for x in elements_json]
     
@@ -103,6 +116,8 @@ def adjust_posts_elements():
 
 @app.route("/create_images", methods=["POST"])
 def create_images():
+    """Create images based on posts elements objects"""
+    
     data = request.get_json()
     site = data["site"]
     
@@ -116,6 +131,8 @@ def create_images():
         
 @app.route("/show_images", methods=["GET", "POST"])
 def show_images():
+    """Display generated images along with neccessary data"""
+    
     site = request.args.get("site")
     metadata = session.get("stories_metadata", {})
     
@@ -124,12 +141,16 @@ def show_images():
 
 @app.route("/stories/<site>/<filename>")
 def uploaded_file(site, filename):
+    """Retrieves image file"""
+    
     upload_folder = os.path.join(app.config['UPLOAD_FOLDER'], site)
     return send_from_directory(upload_folder, filename)
 
 
 @app.route("/recreate_posts_metadata", methods=["POST"])
 def recreate_posts_metadata():
+    """Recreate images with modified data"""
+    
     data = request.get_json()
     metadata = data['data_stories']
     
@@ -138,7 +159,9 @@ def recreate_posts_metadata():
     
 
 @app.route("/download_stories", methods=["GET"])
-def download_stories():    
+def download_stories():
+    """Download generated images together with links to posts"""
+        
     site = request.args.get("site");
     stories_path = project_folder() / "stories" / site
     zip_filename = "%s_stories.zip" % site
@@ -157,13 +180,15 @@ def download_stories():
     
 @app.route("/send_by_email", methods=["POST"])
 def send_by_email():
-    # recipient_mail = "patrik.albert5@gmail.com"
+    """Send generated images along with posts links to the email"""
+    
     data = request.get_json()
     site = data["site"]
     links_encoded = data["links"]
     links = [unquote(x) for x in links_encoded]
     recipient_mail = data["mail"]
     
+    # Generate email with subject, body and attachments 
     try:    
         msg = Message(f"Storkoprístroj 3000", sender=get_mail_credentials()["mail_addr"], recipients=[recipient_mail])
         msg.html = render_template("stories_email.html", site=site, links=links)
