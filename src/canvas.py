@@ -1,3 +1,5 @@
+"""Place together all needed elements for story image using PIL library"""
+
 from PIL import Image, ImageDraw, ImageFont
 
 from typing import List, Dict, Optional
@@ -12,8 +14,9 @@ import urllib
 SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent
 
-
 class Text(BaseModel):
+    """Parameters of texts"""
+    
     text: str
     font: Optional[str]
     font_size: Optional[int]
@@ -28,6 +31,8 @@ class Text(BaseModel):
     
     
 class Background(BaseModel):
+    """Parameters of background image"""
+    
     path: str
     position: List[str | int]
     size: List[str | int]
@@ -35,11 +40,15 @@ class Background(BaseModel):
     
 
 class Canvas(BaseModel):
+    """Canvas width and height"""
+    
     width: int
     height: int
 
 
 class ImageElements(BaseModel):
+    """All elements of image to be created"""
+    
     number: int
     canvas_size: Canvas
     background: Background
@@ -49,42 +58,57 @@ class ImageElements(BaseModel):
     post_url: str
 
 
-def create_canvas(canvas) -> Image:
+def create_canvas(canvas: Canvas) -> Image:
+    """Create blank canvas Image object"""
+    
     blank_canvas = Image.new(
         "RGBA", 
         (canvas.width, canvas.height),
         (255, 255, 255, 255),
         )
-    blank_canvas.save("new.png")
     
     return blank_canvas
     
 
-def _merge_elements(image, element, position):
+def _merge_elements(image: Image, element: Image, position: List[str|int]) -> None:
+    """Merge together two Image objects"""
+    
+    # x_axis can be defined either in pixels or as "center"
     if position[0] == "center":
         position[0] = horizontal_center(image, element)
     image.paste(element, tuple(position), element)
     
     
-def _merge_shapes(elements, canvas):
+def _merge_shapes(elements: ImageElements, canvas: Image) -> None:
+    """Draw shape and merge it to the canvas"""
+    
     if not elements.shapes:
-        return
+        return None
+    
     for element in elements.shapes:
         shape = draw_shape(element)
         _merge_elements(canvas, shape, element["position"])
 
 
-def _merge_images(elements, canvas):
+def _merge_images(elements: ImageElements, canvas: Image) -> None:
+    """Create image object out of image file and merge it to the canvas"""
+    
     if not elements.images:
-        return
+        return None
+    
     for element in elements.images:
         image = open_image(element["path"])
+        
+        # resize image if different dimensions are specified in the template
         if "size" in element.keys() and image.size != element["size"]:
             image = image.resize(tuple(element["size"]))
         _merge_elements(canvas, image, element["position"])
     
 
-def merge_elements(elements: ImageElements, canvas: Image):
+def merge_elements(elements: ImageElements, canvas: Image) -> Image:
+    """Create and put together all elements of the image"""
+    
+    # Create image object of background, resize if needed and set position
     background = open_image(elements.background.path)
     background = resize_background(background, elements.background.size)
     
@@ -94,6 +118,7 @@ def merge_elements(elements: ImageElements, canvas: Image):
     x_axis = int(elements.background.position[0])
     y_axis = int(elements.background.position[1])
     
+    # First merge background with canvas, then add shapes, images and texts
     _merge_elements(canvas, background, (x_axis, y_axis))
     _merge_shapes(elements, canvas)
     _merge_images(elements, canvas)
@@ -103,7 +128,9 @@ def merge_elements(elements: ImageElements, canvas: Image):
     return canvas
 
 
-def open_image(path):
+def open_image(path: str|Path) -> Image:
+    """Create Image object out of the image file, either from url or file path"""
+    
     if path.startswith("https://") or path.startswith("http://"):
         response = requests.get(path, stream=True)
         return Image.open(response.raw).convert("RGBA")
@@ -112,39 +139,52 @@ def open_image(path):
             return Image.open(path).convert("RGBA")
 
 
-def _add_text(image, text):
+def _add_text(image: Image, text: Text) -> None:
+    """Set all attributes of text and merge it to the canvas"""
+    
     y_axis = text.y_axis
     x_axis = text.x_axis
     
+    # Center text
     if x_axis == "center":
         x_pos = image.width // 2
     else:
         x_pos = x_axis
         
     text_str = text.text
-        
+    
+    # Capitalize all letters 
     if text.letter_case == "uppercase":
         text_str = text_str.upper()
-        
+    
     font_size = text.font_size
+    
+    # split text if number of letters in line is exceeded
     message = split_text(text_str, text.word_wrap)
+    
     font = ImageFont.truetype(text.font, text.font_size)
     align = text.align
     fill = text.color
     anchor = text.anchor
+    
+    # Draw all texts into image
     draw = ImageDraw.Draw(image)
     for line in message:
         draw.text((x_pos, y_axis), line, font=font, align=align, fill=fill, anchor=anchor)
         y_axis += font_size * text.line_height
 
 
-def split_text(text:str, max_char) -> List:
+def split_text(text:str, max_char: int) -> List:
+    """Split text into list if number of letters exceeds defined value"""
+    
+    # If text is shorter then max letters allowed, or if text contains newline char, split it
     if len(text) <= max_char or "\n" in text:
         return text.rstrip().split("\n")
      
     text_list = []
     remaining_text = text.rstrip()
     
+    # Split text so the words are not splitted
     while remaining_text:        
         char = ""
         cur_char = max_char
@@ -162,10 +202,14 @@ def split_text(text:str, max_char) -> List:
          
 
 def horizontal_center(el_a: Image, el_b: Image) -> int:
+    """Center element on x axis"""
+    
     return -(el_b.width//2)+(el_a.width//2)
 
 
 def resize_background(background: Image, size: List) -> Image:
+    """Resize background image and keep size ratio"""
+    
     bg_width, bg_height = background.size
     if size[0] == "full":
         ratio = bg_height / size[1]
@@ -175,7 +219,10 @@ def resize_background(background: Image, size: List) -> Image:
     return background.resize((round(bg_width/ratio) ,round(bg_height/ratio)))
 
 
-def draw_shape(details) -> Image:
+def draw_shape(details: Dict) -> Image:
+    """Create ImageDraw object"""
+    
+    # Currently supports only for rounded rectangle 
     size = tuple(details["size"])
     shape = Image.new("RGBA", size)
     draw = ImageDraw.Draw(shape)
@@ -187,7 +234,8 @@ def draw_shape(details) -> Image:
     return shape
 
 
-def create_story(post_elements, site: str) -> Path:
+def create_story(post_elements: ImageElements, site: str) -> Path:
+    """Create and save image file"""
     
     stories_site_dir = PROJECT_FOLDER / "stories" / site
     image_path = f"{stories_site_dir}/{post_elements.number}.png"
