@@ -60,15 +60,6 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/get_stories_template", methods=["GET"])
-def get_stories_template():
-    """Loads template file and returns stories configuration for selected site"""
-    
-    site = request.args.get("site")
-    template = get_story_template(site)
-    return jsonify(template)
-
-
 @app.route("/get_posts_data", methods=["GET"])
 def get_posts_data():
     """
@@ -87,6 +78,15 @@ def get_posts_data():
     return jsonify(posts_data)
 
 
+@app.route("/get_stories_template", methods=["GET"])
+def get_stories_template():
+    """Loads template file and returns stories configuration for selected site"""
+    
+    site = request.args.get("site")
+    template = get_story_template(site)
+    return jsonify(template)
+
+
 @app.route("/get_posts_elements", methods=["GET"])
 def get_posts_elements():
     """From posts metadata and template creates object with data about all elements needed for image creation"""
@@ -99,22 +99,6 @@ def get_posts_elements():
     
     posts_elements = get_elements(posts, template)
     return jsonify(posts_elements)
-
-
-@app.route("/adjust_posts_elements", methods=["GET"])
-def adjust_posts_elements():
-    """Rewrite posts elements if recreate was requested"""
-    
-    elements_json = json.loads(request.args.get("elements"))
-    elements = [ImageElements.model_validate(x) for x in elements_json]
-    
-    metadata = json.loads(request.args.get("metadata"))
-    
-    adjusted_elements = []
-    for image_elements, image_metadata in zip(elements, metadata):
-        adjusted_elements.append(adjust_elements(image_elements, image_metadata))
-        
-    return jsonify(adjusted_elements)    
 
 
 @app.route("/create_images", methods=["POST"])
@@ -130,8 +114,8 @@ def create_images():
     stories_metadata  = create_stories(site, posts_elements)
     session["stories_metadata"] = stories_metadata
     return jsonify({'redirect_url': url_for("show_images", site=site)})
-        
-        
+
+
 @app.route("/show_images", methods=["GET", "POST"])
 def show_images():
     """Display generated images along with neccessary data"""
@@ -160,6 +144,22 @@ def recreate_posts_metadata():
     
     new_metadata = modify_posts_metadata(metadata)
     return jsonify(new_metadata)
+
+
+@app.route("/adjust_posts_elements", methods=["GET"])
+def adjust_posts_elements():
+    """Rewrite posts elements if recreate was requested"""
+    
+    elements_json = json.loads(request.args.get("elements"))
+    elements = [ImageElements.model_validate(x) for x in elements_json]
+    
+    metadata = json.loads(request.args.get("metadata"))
+    
+    adjusted_elements = []
+    for image_elements, image_metadata in zip(elements, metadata):
+        adjusted_elements.append(adjust_elements(image_elements, image_metadata))
+        
+    return jsonify(adjusted_elements)    
     
 
 @app.route("/download_stories", methods=["GET"])
