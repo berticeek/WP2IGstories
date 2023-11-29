@@ -6,9 +6,11 @@ import yaml
 import os
 from urllib.parse import urlparse, urljoin
 from html import unescape
+import logging
 
 from file_paths import template_path, predef_posts_file
 
+LOG = logging.getLogger(__name__)
 
 POSTS_NUMBER = 5
 
@@ -39,6 +41,7 @@ class Posts:
             # Then check if the tag name is in ignore list
             tag = response.json()
             if tag["name"] in exclude_tags:
+                LOG.info(f"Tag: {tag['name']} with ID: {tag_id} found in post.")
                 return True
         return False
 
@@ -50,6 +53,7 @@ class Posts:
         """
         
         posts_api_url = f"{self.api_url}/posts"
+        LOG.info(f"Getting posts data from: '{posts_api_url}'")
         
         # Extend by user-selected date on the web
         current_date = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -61,15 +65,22 @@ class Posts:
             "after": previous_date.isoformat(),
         }
 
-        response = requests.get(posts_api_url, params=params)
-        
-        if response.status_code == 200:
-            posts = response.json()
-            return posts
+        LOG.info(f"Request parameters: {params}")
+
+        try:
+            response = requests.get(posts_api_url, params=params)
+            if response.status_code == 200:
+                posts = response.json()
+                # Exclude post content from the response to not overwhelm log
+                LOG.info(f"Posts retrieved:\n{[{k:v for k, v in post.items() if k != 'content'} for post in posts]}")
+                return posts
+            else:
+                LOG.warning(f"Unexpected response: {response.text}")
+                return None
+
             
-        else:
-            print("Failed to retrieve posts. Status code:", response.status_code)
-            return None
+        except:
+            LOG.exception("Failed to retrieve posts.")
 
 
 def get_valid_posts(api_url: str, pre_posts_len: int, number_posts: int) -> List:
@@ -86,14 +97,16 @@ def get_valid_posts(api_url: str, pre_posts_len: int, number_posts: int) -> List
     # Get all posts from previous day
     posts_list = posts.get_latest_posts()
     if not posts_list:
-        raise Exception("Nepodarilo sa získať články")
+        LOG.error("Nepodarilo sa získať články")
     
     # Filter out posts with unwanted tags
     for post in reversed(posts_list):
         if exclude_tags == None:
             break
         
+        LOG.info(f"Filtering out posts with tags: {exclude_tags}")
         if posts.has_wrong_tag(post["tags"], exclude_tags):
+            LOG.info(f"Post {post['link']} will be skipped.")
             posts_list.remove(post)
     
     # Return selected number of posts or all of them
@@ -118,6 +131,7 @@ def _get_post_cover(api_url: str) -> str:
         result = response.json()
         return result["link"]
     else:
+        LOG.warning(f"Cover image {api_url} cannot be retrieved:\n{response.text}")
         # raise Exception(response.text, response.status_code)
         return None
 
@@ -130,10 +144,12 @@ def get_single_post(api_url: str, post_url: str) -> Dict:
     slug = urlparse(post_url).path.strip("/")
     slug_api_url = os.path.join(api_url, f"posts?slug={slug}")
 
+    LOG.info(f"Getting data for the post '{post_url}'")
     response = requests.get(slug_api_url)
     if response.status_code == 200:
         return response.json()[0]
     else:
+        LOG.info(f"Post data couldn't be retrieved: {response.text}")
         return None
     
 
@@ -153,6 +169,8 @@ def get_post_data(url: str, post: Dict) -> PostData:
     
     # if some of the elements couldn't be retrieved, skip for current post
     if None in [title, post_cover]:
+        LOG.warning("Cover image or title was not retrieved.")
+        LOG.warning(f"Post {post['link']} will be skipped.")
         return None
     
     return PostData(
@@ -182,6 +200,7 @@ def get_posts_metadata(site: str, links: List, number_posts: int) -> List[PostDa
     for post in posts:
         post_data = get_post_data(api_url, post)
         if post_data:
+            LOG.info(f"Created PostData object: {post_data}")
             posts_data.append(post_data)
     return posts_data    
          
@@ -191,6 +210,7 @@ def modify_posts_metadata(metadata):
     
     posts = []
     for post_data in metadata:
+        LOG.info(f"New post data: {post_data}")
         posts.append(
             PostData(
                 title = "",

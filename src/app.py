@@ -17,6 +17,7 @@ import json
 import yaml
 from zipfile import ZipFile
 from urllib.parse import unquote
+import logging
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
@@ -24,6 +25,8 @@ app.secret_key = secrets.token_hex(16)
 script_dir = os.getcwd()
 app.config["UPLOAD_FOLDER"] = os.path.join(script_dir, "stories")
 
+logging.basicConfig(level=logging.INFO, filename=os.path.join(script_dir, "app.log"), filemode="w", format='%(name)s - %(asctime)s - %(levelname)s - %(message)s')
+LOG = logging.getLogger(__name__)
 
 def get_mail_credentials() -> dict:
     """!Should be changed when deployed to use some other SMTP server!"""
@@ -151,6 +154,7 @@ def uploaded_file(site, filename):
 def recreate_posts_metadata():
     """Recreate images with modified data"""
     
+    LOG.info("Recreating images started")
     data = request.get_json()
     metadata = data['data_stories']
     
