@@ -36,9 +36,20 @@ $(document).ready(function(){
                  method: "GET"
              });
          })
-         .then(response => response.json())
+         .then(response => {
+            if (!response.ok){
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+
+         })
          .then(postsElementsList => {
-             posts_elements = postsElementsList;
+            if (postsElementsList.success) {
+                posts_elements = postsElementsList.data;
+            } else {
+                console.error(`Server error: ${postsElementsList.error}`);
+            }
+             
              return fetch(`/create_images`, {
                  method: "POST",
                  headers: {

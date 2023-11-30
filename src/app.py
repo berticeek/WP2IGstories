@@ -84,6 +84,7 @@ def get_stories_template():
     
     site = request.args.get("site")
     template = get_story_template(site)
+    LOG.info("Template loaded successfully!")
     return jsonify(template)
 
 
@@ -91,14 +92,42 @@ def get_stories_template():
 def get_posts_elements():
     """From posts metadata and template creates object with data about all elements needed for image creation"""
     
-    posts_json = json.loads(request.args.get("posts"))
-    posts = [PostData.model_validate(x) for x in posts_json]
+    try:
+        posts_value = request.args.get("posts")
+        
+        if posts_value is None:
+            raise ValueError("Missing 'posts' in the request.")
+        
+        posts_json = json.loads(posts_value)
+        
+        posts = [PostData.model_validate(x) for x in posts_json]
+        
+    except ValueError as ve:
+        LOG.exception("Error in 'posts' parameter")
+        return jsonify({"success": False, "error": str(ve)})
+    except Exception as e:
+        LOG.exception("Unexpected error occurred")
+        return jsonify({"success": False, "error": "Unexpected error occurred"})
     
-    template_json = json.loads(request.args.get("template"))
-    template = Template.model_validate(template_json)
+    try:
+        template_value = request.args.get("template")
+        
+        if template_value is None:
+            raise ValueError("Missing 'template' in the request.")
+        
+        template_json = json.loads(template_value)
+        
+        template = Template.model_validate(template_json)
+    
+    except ValueError as ve:
+        LOG.exception("Error in 'template' parameter")
+        return jsonify({"success": False, "error": str(ve)})
+    except Exception as e:
+        LOG.exception("Unexpected error occurred")
+        return jsonify({"success": False, "error": "Unexpected error occurred"})
     
     posts_elements = get_elements(posts, template)
-    return jsonify(posts_elements)
+    return jsonify({"success": True, "data": posts_elements})
 
 
 @app.route("/create_images", methods=["POST"])
