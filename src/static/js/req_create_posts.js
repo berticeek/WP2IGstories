@@ -8,18 +8,27 @@ $(document).ready(function(){
 
          var showModal = true;
 
+        $('.article-link').each(function() {
+            const linkValue = $(this).val().trim();
+            if (linkValue !== ''){
+                links.push($(this).val());
+            }
+        });
+
          if (!checkbox.checked){
+            console.log("Length: ", links.length);
              postsNum = $('#inputPostsNum').val();
              if (postsNum < 0){
                 showModal = false;
                 alert('Počet článkov nemôže byť nižší ako 0.');
                 return;
              }
+             if ((postsNum === "" || postsNum === 0) && links.length === 0){
+                showModal = false;
+                alert('Zadaj odkazy na články, alebo počet článkov, ktoré chceš vygenerovať');
+                return;
+             }
          }
-         
-         $('.article-link').each(function() {
-             links.push($(this).val());
-         });
 
          console.log("Site:", site);
          console.log("Links:", links);
