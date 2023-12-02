@@ -97,9 +97,16 @@ def get_stories_template():
     """Loads template file and returns stories configuration for selected site"""
     
     site = request.args.get("site")
+    if site is None:
+        LOG.error("Missing 'site' in the request.")
+        return jsonify({"success": False, "error": "Missing 'site' in the request."})
+    
     template = get_story_template(site)
-    LOG.info("Template loaded successfully!")
-    return jsonify(template)
+    if not template:
+        LOG.error("Error while getting template.")
+        return jsonify({"success": False, "error": "Couldn't load template."})
+    
+    return jsonify({"success": True, "data": template})
 
 
 @app.route("/get_posts_elements", methods=["GET"])

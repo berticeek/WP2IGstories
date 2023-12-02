@@ -53,11 +53,18 @@ $(document).ready(function(){
                  method: "GET"
              });
          })
-         .then(response => response.json())
-         .then(templateData => {
-             template = JSON.stringify(templateData);
-             console.log("POSTS:", data_posts);
-             console.log("TEMPLATE:", template);
+         .then(response => {
+            if (!response.ok){
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        }) 
+        .then(templateData => {
+            if (templateData.success){
+                template = JSON.stringify(templateData.data);
+            } else {
+                console.error(`Server error: ${templateData.error}`);
+            }
              return fetch(`/get_posts_elements?posts=${data_posts}&template=${template}`, {
                  method: "GET"
              });
