@@ -2,11 +2,13 @@
 
 import os
 from pathlib import Path
+import logging
 
 
 SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent
 
+LOG = logging.getLogger(__name__)
 
 def project_folder() -> Path:
     """Project root path"""
@@ -26,8 +28,18 @@ def predef_posts_file(site: str) -> str:
 
 def clear_files(site: str) -> None:
     """Remove created data"""
+    
     ignore_files = ["metadata.yaml", "stories.yaml"]
     output_folder = PROJECT_FOLDER / "stories" / site
-    for file in os.listdir(output_folder):
-        if not file in ignore_files:
-            os.remove(os.path.join(output_folder, file))
+    try:
+        for file in os.listdir(output_folder):
+            if not file in ignore_files:
+                os.remove(os.path.join(output_folder, file))
+                
+    except NotADirectoryError as nde:
+        LOG.exception(f"'{output_folder.absolute}' was not found.")
+        return None
+    
+    except PermissionError as pe:
+        LOG.exception(f"Files couldn't be removed.")
+        return None
