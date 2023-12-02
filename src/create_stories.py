@@ -8,6 +8,7 @@ from typing import Dict, List, Tuple, Optional
 import os
 from argparse import ArgumentParser
 from urllib.parse import quote
+import logging
 
 from get_posts_metadata import get_posts_metadata
 from get_posts_metadata import PostData
@@ -23,6 +24,7 @@ from pydantic import BaseModel
 SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent
 
+LOG = logging.getLogger(__name__)
 
 class Template(BaseModel):
     """Configuration of image - 
@@ -38,13 +40,17 @@ class Template(BaseModel):
 def get_story_template(site: str) -> dict:
     """Open template file and load all image settings"""
     
-    template = EnvYAML(template_path(site))
+    try:
+        template = EnvYAML(template_path(site))
+    except Exception as e:
+        LOG.exception("Template file couldn't be loaded.")
+        return None
     
     # Load texts
     if "texts" in template["elements"]:
         texts_config = template["elements"]["texts"]
     else: 
-        text_config = None
+        texts_config = None
     
     # Load url suffix if exists
     if "link_suffix" in template:
@@ -53,13 +59,17 @@ def get_story_template(site: str) -> dict:
         suffix = None
     
     # Create template object with configuration
-    return Template(
-        canvas = template["canvas"],
-        elements = template["elements"],
-        background = template["elements"]["background"],
-        texts_config = texts_config,
-        link_suffix=suffix
-    ).model_dump()
+    try:
+        return Template(
+            canvas = template["canvas"],
+            elements = template["elements"],
+            background = template["elements"]["background"],
+            texts_config = texts_config,
+            link_suffix=suffix
+        ).model_dump()
+    except Exception as e:
+        LOG.exception("Error while creating template object.")
+        return None
 
 
 def get_post_elements(number: int, post: PostData, template: Template) -> dict:
