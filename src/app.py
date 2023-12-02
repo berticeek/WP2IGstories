@@ -68,14 +68,28 @@ def get_posts_data():
     """
     
     site = request.args.get("site")
+    if site is None:
+        LOG.error("Missing 'site' in the request.")
+        return jsonify({"success": False, "error": "Missing 'site' in the request."})
+        
     links = list(filter(None, request.args.getlist("links")[0].split(",")))
-    posts_number = request.args.get("number")
+    if links:
+        LOG.info(f"Predefined posts links found: {links}.\nStories will be created also for these posts.")
+    else:
+        LOG.info("No predefined posts links found. Stories will be created only from latest posts.")
     
-    if not posts_number and links:
+    posts_number_value = request.args.get("number")
+    
+    if not posts_number_value and links:
         posts_number = len(links)
+    else:
+        try:
+            posts_number = int(posts_number_value)
+        except ValueError as ve:
+            return jsonify({"success": False, "error": str(ve)})
     
     posts_data = get_posts_metadata(site, links, int(posts_number))
-    return jsonify(posts_data)
+    return jsonify({"success": True, "data": posts_data})
 
 
 @app.route("/get_stories_template", methods=["GET"])

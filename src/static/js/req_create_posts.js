@@ -37,9 +37,18 @@ $(document).ready(function(){
          fetch(`/get_posts_data?site=${site}&links=${links}&number=${postsNum}`, {
              method: "GET"
          })
-         .then(response => response.json())
+         .then(response => {
+            if (!response.ok){
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
          .then(postsData => {
-             data_posts = JSON.stringify(postsData);
+            if (postsData.success){
+                data_posts = JSON.stringify(postsData.data);
+            } else{
+                console.error(`Server error: ${postsData.error}`);
+            }
              return fetch(`/get_stories_template?site=${site}`, {
                  method: "GET"
              });
