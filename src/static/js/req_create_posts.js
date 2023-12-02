@@ -5,8 +5,16 @@ $(document).ready(function(){
 
          const checkbox = document.getElementById('allPostsCheckbox');
          var postsNum = 0
+
+         var showModal = true;
+
          if (!checkbox.checked){
              postsNum = $('#inputPostsNum').val();
+             if (postsNum < 0){
+                showModal = false;
+                alert('Počet článkov nemôže byť nižší ako 0.');
+                return;
+             }
          }
          
          $('.article-link').each(function() {
@@ -65,7 +73,9 @@ $(document).ready(function(){
          .then(result => {
              window.location.href = `/show_images?site=${site}`;
          })
-
+         if(showModal){
+            $('#loadingModal').modal('show');
+         }
 
     });
 });
