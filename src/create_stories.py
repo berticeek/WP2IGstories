@@ -194,11 +194,18 @@ def create_stories(site: str, posts_elements: List[ImageElements]) -> List:
     
     for elems in posts_elements:
         # Create single image
-        create_story(elems, site)
+        if not create_story(elems, site):
+            return None
         
         output_folder = PROJECT_FOLDER / "stories" / site
         if not os.path.isdir(output_folder):
-            os.mkdir(output_folder)
+            LOG.info(f"Creating output folder: {output_folder}")
+            try:
+                os.mkdir(output_folder)
+            except PermissionError as e:
+                LOG.exception("Failed creating output folder.")
+                return None
+                
         
         # create file with links to posts
         # needed when downloading stories 

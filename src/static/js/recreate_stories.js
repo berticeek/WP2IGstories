@@ -88,7 +88,13 @@ $(document).ready(function () {
                 }),
             });
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok){
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            } else {
+                return response.json()
+            }
+         })
         .then(result => {
             window.location.href = `/show_images?site=${site}`;
         })

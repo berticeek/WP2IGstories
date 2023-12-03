@@ -19,6 +19,8 @@ from zipfile import ZipFile
 from urllib.parse import unquote
 import logging
 
+from pydantic import ValidationError
+
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
 
@@ -155,15 +157,37 @@ def get_posts_elements():
 def create_images():
     """Create images based on posts elements objects"""
     
-    data = request.get_json()
-    site = data["site"]
+    # Get site and posts elements data from request
+    try:
+        data = request.get_json()
+        site = data["site"]
+        posts_elements_json = data["posts_elements"]
+    except KeyError as e:
+        LOG.error(f'Missing key in request: {str(e)}')
+        return jsonify({"success": False, "error": f"Missing key in request {str(e)}"}), 400    
     
-    posts_elements_json = data["posts_elements"]
-    posts_elements = [ImageElements.model_validate(x) for x in posts_elements_json]
     
-    stories_metadata  = create_stories(site, posts_elements)
-    session["stories_metadata"] = stories_metadata
-    return jsonify({'redirect_url': url_for("show_images", site=site)})
+    try:
+        # Create list of ImageElements object from json retrieved from request
+        posts_elements = [ImageElements.model_validate(x) for x in posts_elements_json]
+        
+        # Create images and store their metadata
+        stories_metadata  = create_stories(site, posts_elements)
+        if stories_metadata is None:
+            return jsonify({"success": False, "error": f"Stories creation failed."}), 500
+        
+        # Store metadata into session so they can be later reused by another endpoint
+        session["stories_metadata"] = stories_metadata
+        
+        # Show created images with metadata
+        return jsonify({"success": True, "redirect_url": url_for("show_images", site=site)})
+        
+    except ValidationError as ve:
+        LOG.error(f'ImageElements object cannot be validated: {str(ve)}')
+        return jsonify({"success": False, "error": f"ImageElements object cannot be validated: {str(ve)}"}), 400
+    
+    except Exception as e:
+        return jsonify({"success": False, "error": "An unexpected error occurred."}), 500
 
 
 @app.route("/show_images", methods=["GET", "POST"])

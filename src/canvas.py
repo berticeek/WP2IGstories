@@ -6,6 +6,7 @@ from typing import List, Dict, Optional
 from pydantic import BaseModel
 from pathlib import Path
 import requests
+import logging
 
 import os
 import urllib
@@ -13,6 +14,8 @@ import urllib
 
 SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent
+
+LOG = logging.getLogger(__name__)
 
 class Text(BaseModel):
     """Parameters of texts"""
@@ -87,6 +90,7 @@ def _merge_shapes(elements: ImageElements, canvas: Image) -> None:
     
     for element in elements.shapes:
         shape = draw_shape(element)
+        LOG.info(f"Merging shape '{element}' into canvas...")
         _merge_elements(canvas, shape, element["position"])
 
 
@@ -98,9 +102,11 @@ def _merge_images(elements: ImageElements, canvas: Image) -> None:
     
     for element in elements.images:
         image = open_image(element["path"])
+        LOG.info(f"Merging image {element} into canvas...")
         
         # resize image if different dimensions are specified in the template
         if "size" in element.keys() and image.size != element["size"]:
+            LOG.info(f"Resizing image: {image.size} -> {element['size']}")
             image = image.resize(tuple(element["size"]))
         _merge_elements(canvas, image, element["position"])
     
@@ -109,8 +115,13 @@ def merge_elements(elements: ImageElements, canvas: Image) -> Image:
     """Create and put together all elements of the image"""
     
     # Create image object of background, resize if needed and set position
+    LOG.info("Getting background image...")
     background = open_image(elements.background.path)
-    background = resize_background(background, elements.background.size)
+    if background:
+        background = resize_background(background, elements.background.size)
+    else:
+        LOG.error("Loading background image failed.")
+        return None
     
     if elements.background.position[0] == "center":
         elements.background.position[0] = horizontal_center(canvas, background)
@@ -119,6 +130,7 @@ def merge_elements(elements: ImageElements, canvas: Image) -> Image:
     y_axis = int(elements.background.position[1])
     
     # First merge background with canvas, then add shapes, images and texts
+    LOG.info("Merging background to the canvas...")
     _merge_elements(canvas, background, (x_axis, y_axis))
     _merge_shapes(elements, canvas)
     _merge_images(elements, canvas)
@@ -131,16 +143,27 @@ def merge_elements(elements: ImageElements, canvas: Image) -> Image:
 def open_image(path: str|Path) -> Image:
     """Create Image object out of the image file, either from url or file path"""
     
+    LOG.info(f"Getting image from {path}")
     if path.startswith("https://") or path.startswith("http://"):
         response = requests.get(path, stream=True)
-        return Image.open(response.raw).convert("RGBA")
+        if response.status_code in [200, 201]:
+            LOG.info(f"Image from {path} succefully retrieved.")
+            return Image.open(response.raw).convert("RGBA")
+        else: 
+            LOG.error(f"Image could not be retrieved from the url {path}")
+            return None
     else:
         if os.path.exists(path):
             return Image.open(path).convert("RGBA")
+        else:
+            LOG.error(f"Image path {path} does not exist.")
+            return None
 
 
 def _add_text(image: Image, text: Text) -> None:
     """Set all attributes of text and merge it to the canvas"""
+    
+    LOG.info(f"Adding text to the canvas: {text}")
     
     y_axis = text.y_axis
     x_axis = text.x_axis
@@ -215,6 +238,8 @@ def resize_background(background: Image, size: List) -> Image:
         ratio = bg_height / size[1]
     else:
         ratio = bg_width / size[1]
+
+    LOG.info(f"Resizing background image: '{background.size}' -> '{size}'. Ratio: {ratio}")
     
     return background.resize((round(bg_width/ratio) ,round(bg_height/ratio)))
 
@@ -235,15 +260,35 @@ def draw_shape(details: Dict) -> Image:
 
 
 def create_story(post_elements: ImageElements, site: str) -> Path:
-    """Create and save image file"""
+    """Create and save image file. 
+    Returns True if image was saved"""
+    
+    is_ok = True
     
     stories_site_dir = PROJECT_FOLDER / "stories" / site
     image_path = f"{stories_site_dir}/{post_elements.number}.png"
     
+    # Create blank canvas as the base of the image
     canvas = create_canvas(post_elements.canvas_size)
-    story = merge_elements(post_elements, canvas)
-    if not os.path.isdir(stories_site_dir):
-        os.mkdir(stories_site_dir)
-    story.save(image_path, format="png")
     
-    # return os.path.basename(image_path)
+    # Add elements from the template into the canvas
+    story = merge_elements(post_elements, canvas)
+    if story is None:
+        LOG.error("Merging elements failed.")
+        is_ok = False
+    
+    # Create stories dir if don't exist
+    if not os.path.isdir(stories_site_dir):
+        try:
+            os.mkdir(stories_site_dir)
+        except PermissionError as e:
+            LOG.exception("Stories directory could not be created.")
+            is_ok = False
+    
+    try:
+        story.save(image_path, format="png")
+    except IOError:
+        LOG.exception(f"Image {image_path} can not be saved.")
+        is_ok = False
+        
+    return is_ok
