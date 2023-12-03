@@ -98,5 +98,8 @@ $(document).ready(function () {
         .then(result => {
             window.location.href = `/show_images?site=${site}`;
         })
+        .catch(error => {
+            console.error('Error:', error.message);
+        });
     });
 });

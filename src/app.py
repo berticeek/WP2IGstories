@@ -195,8 +195,17 @@ def show_images():
     """Display generated images along with neccessary data"""
     
     site = request.args.get("site")
-    metadata = session.get("stories_metadata", {})
+    if site is None:
+        LOG.error("Missing 'site' in the request.")
+        return jsonify({"success": False, "error": "Missing 'site' in the request."}), 400 
     
+    metadata_key = "stories_metadata"
+    metadata = session.get(metadata_key, {})
+    if not metadata:
+        LOG.error(f"Key '{metadata_key}' not found in the session.")
+        return jsonify({"success": False, "error": f"Key '{metadata_key}' not found in the session."}), 500 
+    
+    LOG.info(f"Showing {len(metadata)} images...")
     return render_template("stories.html", stories=metadata, site=site)
 
 
