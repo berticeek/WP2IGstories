@@ -90,6 +90,10 @@ $(document).ready(function () {
         })
         .then(response => {
             if (!response.ok){
+                // Hide loading circle and display info about error to user
+                document.getElementById('loading_modal_progress').style.display = "none";
+                document.getElementById('loading_modal_failed').style.display = "block";
+                document.getElementById('loadingModalHead').style.display = "block";
                 throw new Error(`HTTP error! Status: ${response.status}`);
             } else {
                 return response.json()
