@@ -215,5 +215,6 @@ def create_stories(site: str, posts_elements: List[ImageElements]) -> List:
 
         metadata.append(store_metadata(elems))
 
+    LOG.info(f"Successfully created {len(metadata)} images.")
     return metadata
         
