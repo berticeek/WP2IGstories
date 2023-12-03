@@ -195,7 +195,8 @@ def create_stories(site: str, posts_elements: List[ImageElements]) -> List:
     for elems in posts_elements:
         # Create single image
         if not create_story(elems, site):
-            return None
+            LOG.error(f"Image creation failed -> elements: {elems}")
+            continue
         
         output_folder = PROJECT_FOLDER / "stories" / site
         if not os.path.isdir(output_folder):
