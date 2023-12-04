@@ -221,9 +221,21 @@ def uploaded_file(site, filename):
 def recreate_posts_metadata():
     """Recreate images with modified data"""
     
-    LOG.info("Recreating images started")
+    LOG.info("Recreating images started...")
     data = request.get_json()
-    metadata = data['data_stories']
+    if data is None:
+        LOG.error("Missing body in the request.")
+        return jsonify({"success": False, "error": "Missing body in the request."}), 400 
+    
+    # Get changed parameters of images from the request body
+    try:
+        metadata = data['data_stories']
+        if not metadata:
+            LOG.error("'data_stories' empty.")
+            return jsonify({"success": False, "error": "'data_stories' empty."}), 400 
+    except KeyError as e:
+        LOG.exception("'data_stories' key missing in the request body.")
+        return jsonify({"success": False, "error": "'data_stories' key missing in the request body."}), 400 
     
     new_metadata = modify_posts_metadata(metadata)
     return jsonify(new_metadata)
