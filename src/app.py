@@ -219,9 +219,10 @@ def uploaded_file(site, filename):
 
 @app.route("/recreate_posts_metadata", methods=["POST"])
 def recreate_posts_metadata():
-    """Create new PostData objects with changed image parameters"""
+    """Construct new image metadata by changed parameters"""
     
     LOG.info("Recreating images started...")
+    # Get request body
     data = request.get_json()
     if data is None:
         LOG.error("Missing body in the request.")
@@ -237,6 +238,7 @@ def recreate_posts_metadata():
         LOG.exception("'data_stories' key missing in the request body.")
         return jsonify({"success": False, "error": "'data_stories' key missing in the request body."}), 400 
     
+    # Create new list PostData objects with changed parameters
     new_metadata = modify_posts_metadata(metadata)
     if not metadata:
         LOG.error("New PostData object was not created.")
