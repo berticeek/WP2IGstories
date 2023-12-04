@@ -202,7 +202,11 @@ def get_posts_metadata(site: str, links: List, number_posts: int) -> List[PostDa
         if post_data:
             LOG.info(f"Created PostData object: {post_data}")
             posts_data.append(post_data)
-    return posts_data    
+    
+    if posts_data:
+        return posts_data    
+    else:
+        raise ValueError("Posts data model cannot be obtained")
          
 
 def modify_posts_metadata(metadata):
