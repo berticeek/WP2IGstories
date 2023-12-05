@@ -35,16 +35,20 @@ $(document).ready(function () {
                     mail: mail,
                 }),
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok){
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(mailStatus => {
                 // Change loading circle to check or fail
-
-                if (mailStatus["status"] === "success") {
+                if (mailStatus.success) {
                     console.log("Done!")
                     svg.classList.remove('progress-loader');
                     svg.classList.add('ready-loader');
                 } else {
-                    console.log("Failed!!")
+                    console.log(`Sending e-mail failed ${mailStatus.error}`)
                     document.getElementById("mail-sending").style.display = "none";
                     // svg.style.display = "none"
                     document.getElementById("mail-sent-fail").style.display = "block";
