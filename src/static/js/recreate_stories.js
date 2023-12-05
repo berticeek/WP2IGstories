@@ -83,9 +83,18 @@ $(document).ready(function () {
                 method: "GET"
             });
         })
-        .then(response => response.json())
+        .then(response => {
+            if(!response.ok){
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(adjustedPostsElementsList => {
-            adjusted_posts_elements = adjustedPostsElementsList;
+            if (adjustedPostsElementsList.success) {
+                adjusted_posts_elements = adjustedPostsElementsList.data;
+            } else {
+                console.error(`Server error: ${adjustedPostsElementsList.error}`)
+            }
             return fetch(`/create_images`, {
                 method: "POST",
                 headers: {

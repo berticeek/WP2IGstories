@@ -167,15 +167,31 @@ def get_elements(posts: List[PostData], template: Template) -> List:
     return post_elements
         
 
-def adjust_elements(elements: ImageElements, metadata) -> ImageElements:
+def adjust_elements(elements: ImageElements, metadata: Dict) -> ImageElements:
     """Adjust text, cover image or its position based on user input"""
+    
+    if not "texts" in metadata:
+        LOG.error(f"Key 'texts' missing in metadata -> {metadata}, post -> '{elements.post_url}'")
+        return None
     
     # Currently supports only text change and background position
     for text_id, text in enumerate(metadata["texts"]):
-        elements.texts[text_id].text = text
+        try:
+            elements.texts[text_id].text = text
+        except KeyError as ke:
+            LOG.exception(f"Index '{text_id}' out of the range in 'elements.texts'. Text -> '{text}', Post -> '{elements.post_url}'")
+            return None
+        except Exception as e:
+            LOG.exception(f"Unexpected error while adjusting text '{text}' for '{elements.post_url}'")
+            return None
+    
+    if not "image_position_x" in metadata:
+        LOG.error(f"Key 'image_position_x' missing in metadata -> {metadata}, post -> '{elements.post_url}'")
+        return None
     
     elements.background.position[0] = metadata["image_position_x"]
     
+    # Escape HTML characters in the post url before sending it via requests
     elements.post_url = quote(elements.post_url)
         
     return elements.model_dump()

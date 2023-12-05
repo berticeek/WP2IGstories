@@ -251,16 +251,50 @@ def recreate_posts_metadata():
 def adjust_posts_elements():
     """Rewrite posts elements if recreate was requested"""
     
-    elements_json = json.loads(request.args.get("elements"))
-    elements = [ImageElements.model_validate(x) for x in elements_json]
+    LOG.info("Adjusting of img elements started...")
     
-    metadata = json.loads(request.args.get("metadata"))
+    # Get current images elements
+    try:
+        elements_value = request.args.get("elements")
+        if elements_value is None:
+            raise ValueError("Missing 'elements' in the request.")
+        
+        elements_json = json.loads(elements_value)
+        
+        elements = [ImageElements.model_validate(x) for x in elements_json]
+        
+    except ValueError as ve:
+        LOG.exception("Error in 'elements' parameter")
+        return jsonify({"success": False, "error": str(ve)}), 400
+    except Exception as e:
+        LOG.exception("Unexpected error occurred")
+        return jsonify({"success": False, "error": "Unexpected error occurred"}), 400
     
+    # Get changed parameters by user
+    try:
+        metadata_value = request.args.get("metadata")
+        if metadata_value is None:
+            raise ValueError("Missing 'metadata' in the request.") 
+        
+        metadata = json.loads(metadata_value)
+        
+    except ValueError as ve:
+        LOG.exception("Error in 'metadata' parameter")
+        return jsonify({"success": False, "error": str(ve)}), 400
+    except Exception as e:
+        LOG.exception("Unexpected error occurred")
+        return jsonify({"success": False, "error": "Unexpected error occurred"}), 400
+    
+    # Replace parameters of image elements by the changed ones
     adjusted_elements = []
     for image_elements, image_metadata in zip(elements, metadata):
         adjusted_elements.append(adjust_elements(image_elements, image_metadata))
         
-    return jsonify(adjusted_elements)    
+    if all(val is None for val in adjusted_elements):
+        LOG.error("Image elements were not adjusted.")
+        return jsonify({"success": False, "error": "Image elements were not adjusted."}), 500
+    else:
+        return jsonify({"success": True, "data": adjusted_elements})    
     
 
 @app.route("/download_stories", methods=["GET"])
