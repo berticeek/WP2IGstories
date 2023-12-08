@@ -7,10 +7,13 @@ import os
 from urllib.parse import urlparse, urljoin
 from html import unescape
 import logging
+import sys
 
 from .file_paths import template_path, predef_posts_file
 
 LOG = logging.getLogger(__name__)
+handler = logging.StreamHandler(sys.stdout)
+LOG.addHandler(handler)
 
 POSTS_NUMBER = 5
 

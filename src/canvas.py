@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from pathlib import Path
 import requests
 import logging
-
+import sys
 import os
 import urllib
 
@@ -16,6 +16,8 @@ SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent
 
 LOG = logging.getLogger(__name__)
+handler = logging.StreamHandler(sys.stdout)
+LOG.addHandler(handler)
 
 class Text(BaseModel):
     """Parameters of texts"""

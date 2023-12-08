@@ -9,6 +9,7 @@ import os
 from argparse import ArgumentParser
 from urllib.parse import quote
 import logging
+import sys
 
 from .get_posts_metadata import get_posts_metadata
 from .get_posts_metadata import PostData
@@ -25,6 +26,8 @@ SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent
 
 LOG = logging.getLogger(__name__)
+handler = logging.StreamHandler(sys.stdout)
+LOG.addHandler(handler)
 
 class Template(BaseModel):
     """Configuration of image - 

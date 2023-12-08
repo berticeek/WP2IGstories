@@ -3,12 +3,15 @@
 import os
 from pathlib import Path
 import logging
+import sys
 
 
 SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent
 
 LOG = logging.getLogger(__name__)
+handler = logging.StreamHandler(sys.stdout)
+LOG.addHandler(handler)
 
 def project_folder() -> Path:
     """Project root path"""
