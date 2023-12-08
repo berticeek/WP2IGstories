@@ -19,6 +19,7 @@ import yaml
 from zipfile import ZipFile
 from urllib.parse import unquote
 import logging
+import sys
 
 from pydantic import ValidationError
 
@@ -32,6 +33,7 @@ script_dir = os.getcwd()
 app.config["UPLOAD_FOLDER"] = os.path.join(script_dir, "stories")
 
 logging.basicConfig(level=logging.INFO, filename=os.path.join(script_dir, "app.log"), filemode="w", format='%(name)s - %(asctime)s - %(levelname)s - %(message)s')
+handler = logging.StreamHandler(sys.stdout)
 LOG = logging.getLogger(__name__)
 
 def get_mail_credentials() -> dict:
