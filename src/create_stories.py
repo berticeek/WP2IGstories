@@ -10,10 +10,10 @@ from argparse import ArgumentParser
 from urllib.parse import quote
 import logging
 
-from get_posts_metadata import get_posts_metadata
-from get_posts_metadata import PostData
+from .get_posts_metadata import get_posts_metadata
+from .get_posts_metadata import PostData
 
-from file_paths import template_path, clear_files
+from .file_paths import template_path, clear_files
 
 from canvas import Canvas, ImageElements, Background, Text
 from canvas import create_story

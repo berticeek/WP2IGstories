@@ -2,12 +2,12 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from flask_mail import Mail, Message
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from create_stories import create_stories, get_story_template, get_elements, adjust_elements
-from get_posts_metadata import get_posts_metadata, modify_posts_metadata
+from .create_stories import create_stories, get_story_template, get_elements, adjust_elements
+from .get_posts_metadata import get_posts_metadata, modify_posts_metadata
 
-from create_stories import Template, PostData, ImageElements
+from .create_stories import Template, PostData, ImageElements
 
-from file_paths import project_folder
+from .file_paths import project_folder
 
 import os
 import tempfile

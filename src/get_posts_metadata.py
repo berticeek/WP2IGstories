@@ -8,7 +8,7 @@ from urllib.parse import urlparse, urljoin
 from html import unescape
 import logging
 
-from file_paths import template_path, predef_posts_file
+from .file_paths import template_path, predef_posts_file
 
 LOG = logging.getLogger(__name__)
 
