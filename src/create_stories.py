@@ -15,8 +15,8 @@ from .get_posts_metadata import PostData
 
 from .file_paths import template_path, clear_files
 
-from canvas import Canvas, ImageElements, Background, Text
-from canvas import create_story
+from .canvas import Canvas, ImageElements, Background, Text
+from .canvas import create_story
 
 from pydantic import BaseModel
 
