@@ -282,12 +282,14 @@ def create_story(post_elements: ImageElements, site: str) -> Path:
     # Create stories dir if don't exist
     if not os.path.isdir(stories_site_dir):
         try:
+            LOG.info(f"Creating folder -> {stories_site_dir}")
             os.mkdir(stories_site_dir)
         except PermissionError as e:
             LOG.exception("Stories directory could not be created.")
             is_ok = False
     
     try:
+        LOG.info(f"Storing generated image in file -> {image_path}")
         story.save(image_path, format="png")
     except IOError:
         LOG.exception(f"Image {image_path} can not be saved.")
