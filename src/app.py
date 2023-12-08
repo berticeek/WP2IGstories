@@ -184,6 +184,7 @@ def create_images():
         # Create images and store their metadata
         stories_metadata  = create_stories(site, posts_elements)
         if stories_metadata is None:
+            LOG.error("Stories creation failed.")
             return jsonify({"success": False, "error": f"Stories creation failed."}), 500
         
         # Store metadata into session so they can be later reused by another endpoint
@@ -197,6 +198,7 @@ def create_images():
         return jsonify({"success": False, "error": f"ImageElements object cannot be validated: {str(ve)}"}), 400
     
     except Exception as e:
+        LOG.error( f"An unexpected error occurred: {e}")
         return jsonify({"success": False, "error": "An unexpected error occurred."}), 500
 
 
