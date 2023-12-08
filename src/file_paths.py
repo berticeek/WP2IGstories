@@ -34,6 +34,10 @@ def clear_files(site: str) -> None:
     
     ignore_files = ["metadata.yaml", "stories.yaml"]
     output_folder = PROJECT_FOLDER / "stories" / site
+    
+    if not output_folder.exists():
+        return None
+    
     try:
         for file in os.listdir(output_folder):
             if not file in ignore_files:
