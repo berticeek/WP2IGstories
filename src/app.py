@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory, session, send_file
 from flask_mail import Mail, Message
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from create_stories import create_stories, get_story_template, get_elements, adjust_elements
 from get_posts_metadata import get_posts_metadata, modify_posts_metadata
@@ -22,7 +23,10 @@ import logging
 from pydantic import ValidationError
 
 app = Flask(__name__)
-app.secret_key = secrets.token_hex(16)
+app.wsgi_app = ProxyFix(
+    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+)
+app.secret_key = os.environ.get('FLASK_APP_SECRET', secrets.token_hex(16))
 
 script_dir = os.getcwd()
 app.config["UPLOAD_FOLDER"] = os.path.join(script_dir, "stories")
@@ -33,11 +37,14 @@ LOG = logging.getLogger(__name__)
 def get_mail_credentials() -> dict:
     """!Should be changed when deployed to use some other SMTP server!"""
     
-    with open(project_folder() / "email_conf.yaml", "r") as yamlf:
-        credentials = yaml.safe_load(yamlf)
+    # with open(project_folder() / "email_conf.yaml", "r") as yamlf:
+        # credentials = yaml.safe_load(yamlf)
+    mail_address = os.getenv("WPIG_MAIL_ADDRESS")
+    mail_pass = os.getenv("WPIG_MAIL_PASSWORD")
+        
     return({
-        "mail_addr": credentials["mail_address"],
-        "mail_passwd": credentials["app_password"]
+        "mail_addr": mail_address,
+        "mail_passwd": mail_pass,
     })
     
     
@@ -391,4 +398,4 @@ def send_by_email():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
