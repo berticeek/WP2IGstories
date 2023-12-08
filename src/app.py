@@ -33,8 +33,9 @@ script_dir = os.getcwd()
 app.config["UPLOAD_FOLDER"] = os.path.join(script_dir, "stories")
 
 logging.basicConfig(level=logging.INFO, filename=os.path.join(script_dir, "app.log"), filemode="w", format='%(name)s - %(asctime)s - %(levelname)s - %(message)s')
-handler = logging.StreamHandler(sys.stdout)
 LOG = logging.getLogger(__name__)
+handler = logging.StreamHandler(sys.stdout)
+LOG.addHandler(handler)
 
 def get_mail_credentials() -> dict:
     """!Should be changed when deployed to use some other SMTP server!"""
