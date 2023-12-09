@@ -211,19 +211,33 @@ def create_stories(site: str, posts_elements: List[ImageElements]) -> List:
     
     metadata = []
     
+    # Check if stories folder exists and create it if not
+    stories_dir = PROJECT_FOLDER / "stories"
+    if not stories_dir.exists():
+        LOG.info(f"Creating folder -> {str(stories_dir)}")
+        try:
+            os.mkdir(stories_dir)
+        except PermissionError as e:
+            LOG.exception(f"Error during folder creation -> {str(stories_dir)}")
+            return None
+    
     for elems in posts_elements:
         # Create single image
         if not create_story(elems, site):
             LOG.error(f"Image creation failed -> elements: {elems}")
             continue
         
-        output_folder = PROJECT_FOLDER / "stories" / site
+        # Check if site specific story folder exists and create it if not
+        output_folder = stories_dir / site
         if not os.path.isdir(output_folder):
-            LOG.info(f"Creating output folder: {output_folder}")
+            LOG.info(f"Creating output folder: {str(output_folder)}")
             try:
                 os.mkdir(output_folder)
-            except PermissionError as e:
+            except PermissionError as pe:
                 LOG.exception("Failed creating output folder.")
+                return None
+            except Exception as e:
+                LOG.exception(f"Error during folder creation -> {str(output_folder)}")
                 return None
                 
         
