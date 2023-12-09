@@ -31,6 +31,7 @@ body button:hover {
 .container h1 {
   font-family: "Arial", sans-serif;
   color: #333;
+  text-align: center;
 }
 .container .action-buttons {
   display: flex;
@@ -141,7 +142,6 @@ body button:hover {
 .container #stories-container .story .metadata {
   width: 500px;
   margin-bottom: 20px;
-  margin-right: 50px;
 }
 .container #stories-container .story .metadata label {
   display: block;
@@ -168,7 +168,6 @@ body button:hover {
 }
 .container #stories-container .story .metadata a {
   display: flex;
-  text-align: left;
 }
 .container .modal .modal-body {
   text-align: center;
@@ -201,4 +200,34 @@ body button:hover {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+}
+
+@media (max-width: 992px) {
+  #stories-container .story {
+    flex-direction: column;
+  }
+  #stories-container .story .metadata {
+    max-width: 80%;
+    margin-right: 0px;
+  }
+  #stories-container .story .metadata input[type=text],
+  #stories-container .story .metadata textarea {
+    max-width: 80%;
+  }
+  #stories-container .story .metadata a {
+    margin: auto;
+    text-align: center;
+    width: 80%;
+  }
+  .modal-dialog {
+    margin: 1.75rem auto;
+  }
+}
+@media (min-width: 992px) {
+  #stories-container .story .metadata {
+    margin-right: 50px;
+  }
+  #stories-container .story .metadata a {
+    text-align: left;
+  }
 }/*# sourceMappingURL=style.css.map */
