@@ -18,6 +18,25 @@ body button:hover {
   flex-direction: column;
 }
 
+.header {
+  padding-top: 20px;
+  margin-left: 100px;
+  position: fixed;
+  width: 100%;
+}
+.header li {
+  list-style-type: none;
+}
+.header li a {
+  color: #979797;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+.header li a:hover {
+  color: #333;
+}
+
 .container {
   display: flex;
   justify-content: center;
@@ -25,7 +44,7 @@ body button:hover {
   min-height: 100vh;
   width: 80%;
   margin: auto;
-  padding: 50px 0;
+  padding: 100px 0;
   flex-direction: column;
 }
 .container h1 {
@@ -221,6 +240,12 @@ body button:hover {
   }
   .modal-dialog {
     margin: 1.75rem auto;
+  }
+}
+@media (max-width: 1300px) {
+  .header {
+    margin-left: 10px;
+    background-color: #f4f4f4;
   }
 }
 @media (min-width: 992px) {
