@@ -66,4 +66,13 @@ $(document).ready(function () {
         document.getElementById("sendMail").style.display = "block";
         document.getElementById("mail-sending").style.display = "none";
     });
+
+    // Show value of the slider for background position
+    var slider = document.getElementById("bgPosSlider");
+    var output = document.getElementById("bgPosValue");
+    output.innerHTML = slider.value;
+    slider.oninput = function(){
+        output.innerHTML = this.value;
+    }
+
 });
