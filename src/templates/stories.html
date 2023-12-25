@@ -23,13 +23,14 @@
             {% for story in stories %}
             <div class="story" data-number="{{ story['number'] }}" data-url="{{ story['url'] }}" data-image="{{ story['image'] }}">
                 <div class="metadata">
-                    <label>Vodorovná pozícia obrázka:</label>
-                    <input type="text" name="position" value="{{ story['image_position_x'] }}"> px
+                    <label>Pozícia obrázka:</label>
+                    <input type="range" name="position" min="-2000" max="0" value="{{ story['image_position_x'] }}", id="bgPosSlider"> 
+                    <p><span id="bgPosValue"></span> px</p>
                     {% for text in story['texts'] %}
                     <label>Text:</label>
                     <textarea name="text" rows="3">{{ text }}</textarea>
                     {% endfor %}
-                    <a href="{{ story['url']|url_decode }}">{{ story['url']|url_decode }}</a>
+                    <a href="{{ story['url']|url_decode }}" target=”_blank”>{{ story['url']|url_decode }}</a>
                 </div>
                 <img src="{{ url_for('uploaded_file', site=site, filename=story['number'] ~ '.png') }}"
                     alt="{{ story['number'] ~ '.png' }}" class="story-image">
