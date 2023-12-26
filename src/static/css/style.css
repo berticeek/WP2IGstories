@@ -83,7 +83,8 @@ body button:hover {
   margin-bottom: 20px;
   box-sizing: border-box;
 }
-.container #create-stories-form form input[type=text] {
+.container #create-stories-form form input[type=text],
+.container #create-stories-form form input[type=date] {
   border: 1px solid #ddd;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -92,9 +93,22 @@ body button:hover {
   box-sizing: border-box;
   margin-bottom: 10px;
 }
-.container #create-stories-form form input[type=text]:hover {
+.container #create-stories-form form input[type=text]:hover,
+.container #create-stories-form form input[type=date]:hover {
   border-color: #007BFF;
   box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+.container #create-stories-form #date-selector {
+  display: flex;
+  align-items: center;
+}
+.container #create-stories-form #date-selector label {
+  margin: 0px;
+  margin-right: 10px;
+}
+.container #create-stories-form #date-selector input {
+  width: 110px;
+  margin: 0px;
 }
 .container #create-stories-form #links-articles .article-link {
   display: block;

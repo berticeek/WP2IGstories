@@ -24,3 +24,10 @@ function checkIfAllPosts() {
 }
 
 document.addEventListener('DOMContentLoaded', checkIfAllPosts);
+
+// Set value of date-picker for previous day
+$(document).ready(function () {
+    yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1);
+    document.getElementById('postsFromDate').valueAsDate = yesterday;
+});
