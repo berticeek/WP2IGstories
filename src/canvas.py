@@ -40,6 +40,8 @@ class Background(BaseModel):
     
     path: str
     position: List[str | int]
+    min_position_x: int = 0
+    max_position_x: int = 0
     size: List[str | int]
     from_cover: bool
     
@@ -127,6 +129,9 @@ def merge_elements(elements: ImageElements, canvas: Image) -> Image:
     
     if elements.background.position[0] == "center":
         elements.background.position[0] = horizontal_center(canvas, background)
+        
+    # Set minimum and maximum value of bg position (max set by default to 0)
+    elements.background.min_position_x = horizontal_center(canvas, background) * 2
         
     x_axis = int(elements.background.position[0])
     y_axis = int(elements.background.position[1])
