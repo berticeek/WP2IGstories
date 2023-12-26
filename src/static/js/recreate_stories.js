@@ -6,7 +6,7 @@ $(document).ready(function () {
         // Iterate through each .story div
         $('.story').each(function () {
             var storyData = {
-                'image_position_x': $(this).find('input[name="position"]').val(),
+                'image_position_x': $(this).find('input[name="position_value"]').val(),
                 'texts': []
             };
 

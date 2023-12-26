@@ -68,11 +68,20 @@ $(document).ready(function () {
     });
 
     // Show value of the slider for background position
-    var slider = document.getElementById("bgPosSlider");
-    var output = document.getElementById("bgPosValue");
-    output.innerHTML = slider.value;
-    slider.oninput = function(){
-        output.innerHTML = this.value;
-    }
+    var sliders = document.getElementsByClassName("bg-pos-slider");
+    var outputs = document.getElementsByClassName("bg-pos-value");
 
+    for (var i=0; i<sliders.length; i++){
+        outputs[i].value = sliders[i].value;
+
+        sliders[i].addEventListener('input', function() {
+            var index = Array.prototype.indexOf.call(sliders, this);
+            outputs[index].value = this.value;
+        });
+
+        outputs[i].addEventListener('input', function() {
+            var index = Array.prototype.indexOf.call(outputs, this);
+            sliders[index].value = this.value;
+        });
+    }
 });
