@@ -100,7 +100,12 @@ def get_posts_data():
         except ValueError as ve:
             return jsonify({"success": False, "error": str(ve)}), 400
     
-    posts_data = get_posts_metadata(site, links, int(posts_number))
+    posts_from = request.args.get("from_date")
+    if posts_from is None:
+        LOG.error("Missing 'from_date' in the request.")
+        return jsonify({"success": False, "error": "Missing 'from_date' in the request."}), 400
+    
+    posts_data = get_posts_metadata(site, links, int(posts_number), posts_from)
     return jsonify({"success": True, "data": posts_data})
 
 

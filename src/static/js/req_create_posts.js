@@ -21,6 +21,9 @@ $(document).ready(function(){
             }
         });
 
+        // Select date
+        var postsFrom = document.getElementById("postsFromDate").value;
+
          if (!checkbox.checked){
             console.log("Length: ", links.length);
              postsNum = $('#inputPostsNum').val();
@@ -39,8 +42,9 @@ $(document).ready(function(){
          console.log("Site:", site);
          console.log("Links:", links);
          console.log("Number:", postsNum);
+         console.log("Date:", postsFrom);
          
-         fetch(`/get_posts_data?site=${site}&links=${links}&number=${postsNum}`, {
+         fetch(`/get_posts_data?site=${site}&links=${links}&number=${postsNum}&from_date=${postsFrom}`, {
              method: "GET"
          })
          .then(response => {
