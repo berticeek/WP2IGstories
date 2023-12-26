@@ -1,5 +1,11 @@
 $(document).ready(function () {
     $('#recreate').click(function () {
+
+        // First reset modal
+        document.getElementById('loading_modal_progress').style.display = "block";
+        document.getElementById('loading_modal_failed').style.display = "none";
+        document.getElementById('loadingModalHead').style.display = "none";
+
         var storiesData = [];
         console.log("site: ", site)
 
