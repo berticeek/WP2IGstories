@@ -85,6 +85,9 @@ $(document).ready(function () {
         })
         .then(response => {
             if(!response.ok){
+                document.getElementById('loading_modal_progress').style.display = "none";
+                document.getElementById('loading_modal_failed').style.display = "block";
+                document.getElementById('loadingModalHead').style.display = "block";
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             return response.json();
