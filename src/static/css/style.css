@@ -168,6 +168,7 @@ body button:hover {
   font-weight: bold;
 }
 .container #stories-container .story .metadata input[type=text],
+.container #stories-container .story .metadata input[type=number],
 .container #stories-container .story .metadata textarea {
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -176,8 +177,10 @@ body button:hover {
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 10px;
+  padding: 10px;
 }
 .container #stories-container .story .metadata input[type=text]:hover,
+.container #stories-container .story .metadata input[type=number]:hover,
 .container #stories-container .story .metadata textarea:hover {
   border-color: #007BFF;
   box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
@@ -187,6 +190,11 @@ body button:hover {
 }
 .container #stories-container .story .metadata a {
   display: flex;
+}
+.container #stories-container .story .metadata .bg-pos-value {
+  width: 80px !important;
+  text-align: center;
+  padding: 5px !important;
 }
 .container .modal .modal-body {
   text-align: center;
