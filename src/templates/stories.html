@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <script src="https://kit.fontawesome.com/f1df8a599f.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../static/css/style.css">
     <link rel="stylesheet" href="../static/css/loading_circle.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -34,6 +35,7 @@
                 </div>
                 <img src="{{ url_for('uploaded_file', site=site, filename=story['number'] ~ '.png') }}"
                     alt="{{ story['number'] ~ '.png' }}" class="story-image">
+                    <i class="fa-regular fa-trash-can" onclick="deleteStory('{{ story['number'] }}')"></i>
             </div>
             {% endfor %}
         </div>

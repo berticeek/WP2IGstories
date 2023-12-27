@@ -85,3 +85,20 @@ $(document).ready(function () {
         });
     }
 });
+
+function deleteStory(story_number){
+    fetch(`/delete_story/${site}/${story_number}`, {method: 'DELETE'})
+        .then(response => {
+            if (!response.ok){
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(result => {
+            if (result.success) {
+                window.location.href = `/show_images?site=${site}`;
+            } else {
+                console.log(`Removing story failed ${result.error}`)
+            }
+        })
+}

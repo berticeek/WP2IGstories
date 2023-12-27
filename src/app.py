@@ -7,6 +7,8 @@ from .get_posts_metadata import get_posts_metadata, modify_posts_metadata
 
 from .create_stories import Template, PostData, ImageElements
 
+from .delete_stories import delete_story_file
+
 from .file_paths import project_folder
 
 import os
@@ -405,7 +407,26 @@ def send_by_email():
         return jsonify({"success": False, "error": f"Error sending email: {str(e)}"})
     finally:
         LOG.info("Email sent successfully")
-
+        
+        
+@app.route("/delete_story/<site>/<story_number>", methods=["DELETE"])
+def delete_story(site: str, story_number: str):
+    """Endpoint for deleting selected story"""
+    
+    story_number = int(story_number)
+    
+    metadata_key = "stories_metadata"
+    metadata = session.get(metadata_key, {})
+    
+    if delete_story_file(metadata[story_number], site):
+        LOG.info(f"File {story_number}.png was deleted.")
+        metadata.pop(story_number)
+        session[metadata_key] = metadata
+        return jsonify({"success": True})
+    else:
+        LOG.error(f"File {story_number}.png was not deleted.")
+        return jsonify({"success": False, "error": f"File {story_number}.png was not deleted"})
+    
 
 if __name__ == "__main__":
     app.run(debug=False)
