@@ -221,11 +221,11 @@ def show_images():
     metadata_key = "stories_metadata"
     metadata = session.get(metadata_key, {})
     if not metadata:
-        LOG.error(f"Key '{metadata_key}' not found in the session.")
-        return jsonify({"success": False, "error": f"Key '{metadata_key}' not found in the session."}), 500 
+        LOG.warning(f"Key '{metadata_key}' not found in the session.")
+        return render_template("stories.html", stories=metadata, site=site, empty_metadata=True)
     
     LOG.info(f"Showing {len(metadata)} images...")
-    return render_template("stories.html", stories=metadata, site=site)
+    return render_template("stories.html", stories=metadata, site=site, empty_metadata=False)
 
 
 @app.route("/stories/<site>/<filename>")

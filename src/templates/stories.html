@@ -21,6 +21,12 @@
     </div>
     <div class="container">
         <div id="stories-container">
+            {% if empty_metadata %}
+            <script>
+                alert("Vyzerá to, že nie sú žiadne storky na zobrazenie. Skús vygenerovať nové.");
+                window.location.href = "/";
+            </script>
+            {% endif %}
             {% for story in stories %}
             <div class="story" data-number="{{ story['number'] }}" data-url="{{ story['url'] }}" data-image="{{ story['image'] }}">
                 <div class="metadata">
