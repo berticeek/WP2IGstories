@@ -7,7 +7,7 @@ from .get_posts_metadata import get_posts_metadata, modify_posts_metadata
 
 from .create_stories import Template, PostData, ImageElements
 
-from .delete_stories import delete_story_file
+from .delete_stories import delete_story_file, reorder_stories
 
 from .file_paths import project_folder
 
@@ -418,9 +418,13 @@ def delete_story(site: str, story_number: str):
     metadata_key = "stories_metadata"
     metadata = session.get(metadata_key, {})
     
+    # Delete png file
     if delete_story_file(metadata[story_number], site):
         LOG.info(f"File {story_number}.png was deleted.")
+        # Delete entry in the metadata
         metadata.pop(story_number)
+        # Reorder png files numbers and numbers in metadata
+        metadata = reorder_stories(metadata, site)
         session[metadata_key] = metadata
         return jsonify({"success": True})
     else:
