@@ -41,7 +41,7 @@
                 </div>
                 <img src="{{ url_for('uploaded_file', site=site, filename=story['number'] ~ '.png') }}"
                     alt="{{ story['number'] ~ '.png' }}" class="story-image">
-                    <i class="fa-regular fa-trash-can" onclick="deleteStory('{{ story['number'] }}')"></i>
+                    <i class="fa-regular fa-trash-can" onclick="deleteStory(`{{ story['number'] }}`)"></i>
             </div>
             {% endfor %}
         </div>
