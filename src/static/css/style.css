@@ -172,6 +172,12 @@ body button:hover {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+.container #stories-container .story .delete-story {
+  color: #979797;
+  margin-left: 30px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
 .container #stories-container .story .metadata {
   width: 500px;
   margin-bottom: 20px;
@@ -246,6 +252,10 @@ body button:hover {
 @media (max-width: 992px) {
   #stories-container .story {
     flex-direction: column;
+  }
+  #stories-container .story .delete-story {
+    margin-top: 30px;
+    margin-left: 0px !important;
   }
   #stories-container .story .metadata {
     max-width: 80%;
