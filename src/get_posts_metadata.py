@@ -49,7 +49,7 @@ class Posts:
         return False
 
 
-    def get_latest_posts(self) -> List:
+    def get_latest_posts(self, posts_from: str) -> List:
         """
         Retrieve list of the posts posted on previous day (max 20)
         Returns all data retrieved from wordpress API
@@ -58,14 +58,19 @@ class Posts:
         posts_api_url = f"{self.api_url}/posts"
         LOG.info(f"Getting posts data from: '{posts_api_url}'")
         
-        # Extend by user-selected date on the web
-        current_date = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
-        previous_date = current_date - timedelta(days=1)
+        # Get posts by user-selected date on the web
+        from_date = datetime.strptime(posts_from, '%Y-%m-%d')
+        to_date = from_date + timedelta(days=1)
+        
+        if not from_date < datetime.today():
+            LOG.warning(f"Selected date is higher than today, setting date automatically for today...")
+            from_date = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+            
         params = {
             "per_page": 20,
             "status": "publish",
-            "before": current_date.isoformat(),
-            "after": previous_date.isoformat(),
+            "before": to_date.isoformat(),
+            "after": from_date.isoformat(),
         }
 
         LOG.info(f"Request parameters: {params}")
@@ -86,7 +91,7 @@ class Posts:
             LOG.exception("Failed to retrieve posts.")
 
 
-def get_valid_posts(api_url: str, pre_posts_len: int, number_posts: int) -> List:
+def get_valid_posts(api_url: str, pre_posts_len: int, number_posts: int, posts_from: str) -> List:
     """
     Get posts published on previous day (later any selected date)
     Then filter out only posts that meet criteria
@@ -98,7 +103,7 @@ def get_valid_posts(api_url: str, pre_posts_len: int, number_posts: int) -> List
     posts = Posts(api_url)
     
     # Get all posts from previous day
-    posts_list = posts.get_latest_posts()
+    posts_list = posts.get_latest_posts(posts_from)
     if not posts_list:
         LOG.error("Nepodarilo sa získať články")
     
@@ -183,7 +188,7 @@ def get_post_data(url: str, post: Dict) -> PostData:
     ).model_dump()
 
 
-def get_posts_metadata(site: str, links: List, number_posts: int) -> List[PostData]:
+def get_posts_metadata(site: str, links: List, number_posts: int, posts_from: str) -> List[PostData]:
     """Retrieve posts data by api request and create list of metadata objects"""
     
     api_url = get_api_url(site)
@@ -196,7 +201,7 @@ def get_posts_metadata(site: str, links: List, number_posts: int) -> List[PostDa
             pre_posts.append(get_single_post(api_url, link))
      
     # Append data of remaining posts (either all posts or up to max number)
-    posts = pre_posts + get_valid_posts(api_url, len(pre_posts), number_posts)
+    posts = pre_posts + get_valid_posts(api_url, len(pre_posts), number_posts, posts_from)
     posts_data = []  
     
     # Get needed data from posts request responses 

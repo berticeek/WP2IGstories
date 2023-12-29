@@ -1,12 +1,18 @@
 $(document).ready(function () {
     $('#recreate').click(function () {
+
+        // First reset modal
+        document.getElementById('loading_modal_progress').style.display = "block";
+        document.getElementById('loading_modal_failed').style.display = "none";
+        document.getElementById('loadingModalHead').style.display = "none";
+
         var storiesData = [];
         console.log("site: ", site)
 
         // Iterate through each .story div
         $('.story').each(function () {
             var storyData = {
-                'image_position_x': $(this).find('input[name="position"]').val(),
+                'image_position_x': $(this).find('input[name="position_value"]').val(),
                 'texts': []
             };
 
@@ -85,6 +91,9 @@ $(document).ready(function () {
         })
         .then(response => {
             if(!response.ok){
+                document.getElementById('loading_modal_progress').style.display = "none";
+                document.getElementById('loading_modal_failed').style.display = "block";
+                document.getElementById('loadingModalHead').style.display = "block";
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             return response.json();

@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.3.0/build/global/luxon.min.js"></script>
+    <script src="https://kit.fontawesome.com/f1df8a599f.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../static/css/style.css">
     <link rel="stylesheet" href="../static/css/loading_circle.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,19 +21,27 @@
     </div>
     <div class="container">
         <div id="stories-container">
+            {% if empty_metadata %}
+            <script>
+                alert("Vyzerá to, že nie sú žiadne storky na zobrazenie. Skús vygenerovať nové.");
+                window.location.href = "/";
+            </script>
+            {% endif %}
             {% for story in stories %}
             <div class="story" data-number="{{ story['number'] }}" data-url="{{ story['url'] }}" data-image="{{ story['image'] }}">
                 <div class="metadata">
-                    <label>Vodorovná pozícia obrázka:</label>
-                    <input type="text" name="position" value="{{ story['image_position_x'] }}"> px
+                    <label>Pozícia obrázka:</label>
+                    <input type="range" name="position_slider" min="{{ story['min_image_pos_x'] }}" max="{{ story['max_image_pos_x'] }}" value="{{ story['image_position_x'] }}", class="bg-pos-slider"> 
+                    <p><input type="number" name="position_value" class="bg-pos-value"> px</p>
                     {% for text in story['texts'] %}
                     <label>Text:</label>
                     <textarea name="text" rows="3">{{ text }}</textarea>
                     {% endfor %}
-                    <a href="{{ story['url']|url_decode }}">{{ story['url']|url_decode }}</a>
+                    <a href="{{ story['url']|url_decode }}" target=”_blank”>{{ story['url']|url_decode }}</a>
                 </div>
                 <img src="{{ url_for('uploaded_file', site=site, filename=story['number'] ~ '.png') }}"
                     alt="{{ story['number'] ~ '.png' }}" class="story-image">
+                <i class="fa-regular fa-trash-can delete-story" onclick="deleteStory(`{{ story['number'] }}`)"></i>
             </div>
             {% endfor %}
         </div>

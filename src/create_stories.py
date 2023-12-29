@@ -157,6 +157,8 @@ def store_metadata(elements: ImageElements) -> Dict:
         "url": f"{elements.post_url}",
         "image": f"{elements.background.path}",
         "image_position_x":f"{elements.background.position[0]}",
+        "min_image_pos_x": f"{elements.background.min_position_x}",
+        "max_image_pos_x": f"{elements.background.max_position_x}",
         "texts": texts,
     }
 

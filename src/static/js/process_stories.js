@@ -66,4 +66,39 @@ $(document).ready(function () {
         document.getElementById("sendMail").style.display = "block";
         document.getElementById("mail-sending").style.display = "none";
     });
+
+    // Show value of the slider for background position
+    var sliders = document.getElementsByClassName("bg-pos-slider");
+    var outputs = document.getElementsByClassName("bg-pos-value");
+
+    for (var i=0; i<sliders.length; i++){
+        outputs[i].value = sliders[i].value;
+
+        sliders[i].addEventListener('input', function() {
+            var index = Array.prototype.indexOf.call(sliders, this);
+            outputs[index].value = this.value;
+        });
+
+        outputs[i].addEventListener('input', function() {
+            var index = Array.prototype.indexOf.call(outputs, this);
+            sliders[index].value = this.value;
+        });
+    }
 });
+
+function deleteStory(story_number){
+    fetch(`/delete_story/${site}/${story_number}`, {method: 'DELETE'})
+        .then(response => {
+            if (!response.ok){
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(result => {
+            if (result.success) {
+                window.location.href = `/show_images?site=${site}`;
+            } else {
+                console.log(`Removing story failed ${result.error}`)
+            }
+        })
+}

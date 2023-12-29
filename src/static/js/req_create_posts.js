@@ -1,5 +1,11 @@
 $(document).ready(function(){
     $("#create").click(function(){
+
+        // First reset modal
+        document.getElementById('loading_modal_progress').style.display = "block";
+        document.getElementById('loading_modal_failed').style.display = "none";
+        document.getElementById('loadingModalHead').style.display = "none";
+
          var site = $('#site').val();
          var links = []
 
@@ -14,6 +20,9 @@ $(document).ready(function(){
                 links.push($(this).val());
             }
         });
+
+        // Select date
+        var postsFrom = document.getElementById("postsFromDate").value;
 
          if (!checkbox.checked){
             console.log("Length: ", links.length);
@@ -33,8 +42,9 @@ $(document).ready(function(){
          console.log("Site:", site);
          console.log("Links:", links);
          console.log("Number:", postsNum);
+         console.log("Date:", postsFrom);
          
-         fetch(`/get_posts_data?site=${site}&links=${links}&number=${postsNum}`, {
+         fetch(`/get_posts_data?site=${site}&links=${links}&number=${postsNum}&from_date=${postsFrom}`, {
              method: "GET"
          })
          .then(response => {

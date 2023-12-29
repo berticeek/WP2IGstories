@@ -7,6 +7,8 @@ from .get_posts_metadata import get_posts_metadata, modify_posts_metadata
 
 from .create_stories import Template, PostData, ImageElements
 
+from .delete_stories import delete_story_file, reorder_stories
+
 from .file_paths import project_folder
 
 import os
@@ -100,7 +102,12 @@ def get_posts_data():
         except ValueError as ve:
             return jsonify({"success": False, "error": str(ve)}), 400
     
-    posts_data = get_posts_metadata(site, links, int(posts_number))
+    posts_from = request.args.get("from_date")
+    if posts_from is None:
+        LOG.error("Missing 'from_date' in the request.")
+        return jsonify({"success": False, "error": "Missing 'from_date' in the request."}), 400
+    
+    posts_data = get_posts_metadata(site, links, int(posts_number), posts_from)
     return jsonify({"success": True, "data": posts_data})
 
 
@@ -214,11 +221,11 @@ def show_images():
     metadata_key = "stories_metadata"
     metadata = session.get(metadata_key, {})
     if not metadata:
-        LOG.error(f"Key '{metadata_key}' not found in the session.")
-        return jsonify({"success": False, "error": f"Key '{metadata_key}' not found in the session."}), 500 
+        LOG.warning(f"Key '{metadata_key}' not found in the session.")
+        return render_template("stories.html", stories=metadata, site=site, empty_metadata=True)
     
     LOG.info(f"Showing {len(metadata)} images...")
-    return render_template("stories.html", stories=metadata, site=site)
+    return render_template("stories.html", stories=metadata, site=site, empty_metadata=False)
 
 
 @app.route("/stories/<site>/<filename>")
@@ -400,7 +407,30 @@ def send_by_email():
         return jsonify({"success": False, "error": f"Error sending email: {str(e)}"})
     finally:
         LOG.info("Email sent successfully")
-
+        
+        
+@app.route("/delete_story/<site>/<story_number>", methods=["DELETE"])
+def delete_story(site: str, story_number: str):
+    """Endpoint for deleting selected story"""
+    
+    story_number = int(story_number)
+    
+    metadata_key = "stories_metadata"
+    metadata = session.get(metadata_key, {})
+    
+    # Delete png file
+    if delete_story_file(metadata[story_number], site):
+        LOG.info(f"File {story_number}.png was deleted.")
+        # Delete entry in the metadata
+        metadata.pop(story_number)
+        # Reorder png files numbers and numbers in metadata
+        metadata = reorder_stories(metadata, site)
+        session[metadata_key] = metadata
+        return jsonify({"success": True})
+    else:
+        LOG.error(f"File {story_number}.png was not deleted.")
+        return jsonify({"success": False, "error": f"File {story_number}.png was not deleted"})
+    
 
 if __name__ == "__main__":
     app.run(debug=False)
