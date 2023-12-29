@@ -251,15 +251,20 @@ body button:hover {
 
 @media (max-width: 992px) {
   #stories-container .story {
+    max-width: 100vw;
     flex-direction: column;
   }
   #stories-container .story .delete-story {
-    margin-top: 30px;
+    margin-top: 20px;
     margin-left: 0px !important;
+    order: 3;
   }
   #stories-container .story .metadata {
     max-width: 80%;
     margin-right: 0px;
+    margin-bottom: 0px !important;
+    margin-top: 20px;
+    order: 2;
   }
   #stories-container .story .metadata input[type=text],
   #stories-container .story .metadata textarea {
@@ -269,6 +274,9 @@ body button:hover {
     margin: auto;
     text-align: center;
     width: 80%;
+  }
+  #stories-container .story .story-image {
+    order: 1;
   }
   .modal-dialog {
     margin: 1.75rem auto;
