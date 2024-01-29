@@ -11,8 +11,12 @@ $(document).ready(function () {
 
         // Iterate through each .story div
         $('.story').each(function () {
+            var min_position_x = $(this).find('input[name="position_slider"]').attr('min');
+            var center_position_x = $(this).find('input[name="position_value"]').val();
+            console.log("Min pos: ", min_position_x);
+            console.log("Center pos: ", center_position_x);
             var storyData = {
-                'image_position_x': $(this).find('input[name="position_value"]').val(),
+                'image_position_x': (min_position_x - center_position_x).toString(),
                 'texts': []
             };
 

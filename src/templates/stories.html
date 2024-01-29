@@ -31,7 +31,7 @@
             <div class="story" data-number="{{ story['number'] }}" data-url="{{ story['url'] }}" data-image="{{ story['image'] }}">
                 <div class="metadata">
                     <label>Pozícia obrázka:</label>
-                    <input type="range" name="position_slider" min="{{ story['min_image_pos_x'] }}" max="{{ story['max_image_pos_x'] }}" value="{{ story['image_position_x'] }}", class="bg-pos-slider"> 
+                    <input type="range" name="position_slider" min="{{ story['min_image_pos_x'] // 2 }}" max="{{ - story['min_image_pos_x'] // 2 }}" value="{{ - (story['image_position_x'] - story['min_image_pos_x'] // 2) }}", class="bg-pos-slider"> 
                     <p><input type="number" name="position_value" class="bg-pos-value"> px</p>
                     {% for text in story['texts'] %}
                     <label>Text:</label>

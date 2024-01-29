@@ -150,9 +150,9 @@ def store_metadata(elements: ImageElements) -> Dict:
         "number": elements.number,
         "url": f"{elements.post_url}",
         "image": f"{elements.background.path}",
-        "image_position_x":f"{elements.background.position[0]}",
-        "min_image_pos_x": f"{elements.background.min_position_x}",
-        "max_image_pos_x": f"{elements.background.max_position_x}",
+        "image_position_x":elements.background.position[0],
+        "min_image_pos_x": elements.background.min_position_x,
+        "max_image_pos_x": elements.background.max_position_x,
         "texts": texts,
     }
 
@@ -188,7 +188,7 @@ def adjust_elements(elements: ImageElements, metadata: Dict) -> ImageElements:
         LOG.error(f"Key 'image_position_x' missing in metadata -> {metadata}, post -> '{elements.post_url}'")
         return None
     
-    elements.background.position[0] = metadata["image_position_x"]
+    elements.background.position[0] = int(metadata["image_position_x"])
     
     # Escape HTML characters in the post url before sending it via requests
     elements.post_url = quote(elements.post_url)
