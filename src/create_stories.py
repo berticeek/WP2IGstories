@@ -1,25 +1,19 @@
 """Collects all neccessary data and calls function for creating image file out of them"""
 
-from pathlib import Path
-import yaml
-from envyaml import EnvYAML
-import json
-from typing import Dict, List, Tuple, Optional
 import os
-from argparse import ArgumentParser
-from urllib.parse import quote
 import logging
 import sys
+from pathlib import Path
+from typing import Dict, List, Optional
+from urllib.parse import quote
 
-from .get_posts_metadata import get_posts_metadata
-from .get_posts_metadata import PostData
-
-from .file_paths import template_path, clear_files
+from envyaml import EnvYAML
+from pydantic import BaseModel
 
 from .canvas import Canvas, ImageElements, Background, Text
 from .canvas import create_story
-
-from pydantic import BaseModel
+from .file_paths import template_path, clear_files
+from .get_posts_metadata import PostData
 
 
 SCRIPT_FOLDER = Path(__file__).parent
@@ -156,9 +150,9 @@ def store_metadata(elements: ImageElements) -> Dict:
         "number": elements.number,
         "url": f"{elements.post_url}",
         "image": f"{elements.background.path}",
-        "image_position_x":f"{elements.background.position[0]}",
-        "min_image_pos_x": f"{elements.background.min_position_x}",
-        "max_image_pos_x": f"{elements.background.max_position_x}",
+        "image_position_x":elements.background.position[0],
+        "min_image_pos_x": elements.background.min_position_x,
+        "max_image_pos_x": elements.background.max_position_x,
         "texts": texts,
     }
 
@@ -194,7 +188,7 @@ def adjust_elements(elements: ImageElements, metadata: Dict) -> ImageElements:
         LOG.error(f"Key 'image_position_x' missing in metadata -> {metadata}, post -> '{elements.post_url}'")
         return None
     
-    elements.background.position[0] = metadata["image_position_x"]
+    elements.background.position[0] = int(metadata["image_position_x"])
     
     # Escape HTML characters in the post url before sending it via requests
     elements.post_url = quote(elements.post_url)

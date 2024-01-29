@@ -1,29 +1,21 @@
+import json
+import logging
+import os
+import secrets
+import shutil
+import sys
+from urllib.parse import unquote
+
 from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory, session, send_file
 from flask_mail import Mail, Message
+from pydantic import ValidationError
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .create_stories import create_stories, get_story_template, get_elements, adjust_elements
-from .get_posts_metadata import get_posts_metadata, modify_posts_metadata
-
 from .create_stories import Template, PostData, ImageElements
-
 from .delete_stories import delete_story_file, reorder_stories
-
 from .file_paths import project_folder
-
-import os
-import tempfile
-import shutil
-import time
-import secrets
-import json
-import yaml
-from zipfile import ZipFile
-from urllib.parse import unquote
-import logging
-import sys
-
-from pydantic import ValidationError
+from .get_posts_metadata import get_posts_metadata, modify_posts_metadata
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(

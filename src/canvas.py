@@ -1,15 +1,14 @@
 """Place together all needed elements for story image using PIL library"""
 
-from PIL import Image, ImageDraw, ImageFont
-
-from typing import List, Dict, Optional
-from pydantic import BaseModel
-from pathlib import Path
-import requests
 import logging
-import sys
 import os
-import urllib
+import requests
+import sys
+from pathlib import Path
+from typing import List, Dict, Optional
+
+from PIL import Image, ImageDraw, ImageFont
+from pydantic import BaseModel
 
 
 SCRIPT_FOLDER = Path(__file__).parent

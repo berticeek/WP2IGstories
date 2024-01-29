@@ -1,7 +1,7 @@
-from pathlib import Path
 import logging
-import sys
 import os
+import sys
+from pathlib import Path
 
 SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent

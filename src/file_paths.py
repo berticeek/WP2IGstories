@@ -1,9 +1,9 @@
 """Retrieve absolute paths to the files used among different modules"""
 
-import os
-from pathlib import Path
 import logging
+import os
 import sys
+from pathlib import Path
 
 
 SCRIPT_FOLDER = Path(__file__).parent
