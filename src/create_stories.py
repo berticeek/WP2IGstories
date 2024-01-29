@@ -1,25 +1,19 @@
 """Collects all neccessary data and calls function for creating image file out of them"""
 
-from pathlib import Path
-import yaml
-from envyaml import EnvYAML
-import json
-from typing import Dict, List, Tuple, Optional
 import os
-from argparse import ArgumentParser
-from urllib.parse import quote
 import logging
 import sys
+from pathlib import Path
+from typing import Dict, List, Optional
+from urllib.parse import quote
 
-from .get_posts_metadata import get_posts_metadata
-from .get_posts_metadata import PostData
-
-from .file_paths import template_path, clear_files
+from envyaml import EnvYAML
+from pydantic import BaseModel
 
 from .canvas import Canvas, ImageElements, Background, Text
 from .canvas import create_story
-
-from pydantic import BaseModel
+from .file_paths import template_path, clear_files
+from .get_posts_metadata import PostData
 
 
 SCRIPT_FOLDER = Path(__file__).parent

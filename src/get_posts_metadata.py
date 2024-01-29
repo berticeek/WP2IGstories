@@ -1,13 +1,14 @@
-import requests
-from datetime import datetime, timedelta
-from typing import List, Set, Dict
-from pydantic import BaseModel
-import yaml
-import os
-from urllib.parse import urlparse, urljoin
-from html import unescape
 import logging
+import requests
+import os
 import sys
+from datetime import datetime, timedelta
+from html import unescape
+from typing import List, Dict
+from urllib.parse import urlparse
+
+import yaml
+from pydantic import BaseModel
 
 from .file_paths import template_path, predef_posts_file
 
