@@ -7,6 +7,7 @@ envyaml==1.10.211231
 Flask==2.2.3
 Flask-Mail==0.9.1
 Flask-SQLAlchemy==3.0.3
+gevent==23.9.1
 greenlet==2.0.2
 gunicorn==21.2.0
 idna==3.4
