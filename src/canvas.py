@@ -10,6 +10,7 @@ from typing import List, Dict, Optional
 from PIL import Image, ImageDraw, ImageFont
 from pydantic import BaseModel
 
+Image.MAX_IMAGE_PIXELS = None
 
 SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent
