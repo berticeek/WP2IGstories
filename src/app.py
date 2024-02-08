@@ -10,6 +10,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from flask_mail import Mail, Message
 from pydantic import ValidationError
 from werkzeug.middleware.proxy_fix import ProxyFix
+from oauthlib.oauth2 import WebApplicationClient
 
 from .create_stories import create_stories, get_story_template, get_elements, adjust_elements
 from .create_stories import Template, PostData, ImageElements
@@ -64,6 +65,62 @@ def index():
     """Main page"""
     
     return render_template("index.html")
+
+
+@app.route("/login")
+def login():
+    """Login page"""
+    
+    return render_template("login.html")
+
+
+@app.route('/facebook/')
+def facebook():
+   
+    FACEBOOK_CLIENT_SECRET = os.environ.get('FACEBOOK_CLIENT_SECRET')
+    
+    fb_client = WebApplicationClient(os.environ.get('FACEBOOK_CLIENT_ID'))
+    auth_url = "https://www.facebook.com/dialog/oauth"
+    
+    request_uri = fb_client.prepare_request_uri(
+        auth_url,
+        redirect_uri = request.base_url + "/auth",
+        scope = ["email", "instagram_basic"],
+        auth_type = "reauthenticate"
+        
+        # name='facebook',
+        # client_id=FACEBOOK_CLIENT_ID,
+        # client_secret=FACEBOOK_CLIENT_SECRET,
+        # access_token_url='https://graph.facebook.com/oauth/access_token',
+        # access_token_params=None,
+        # authorize_url='https://www.facebook.com/dialog/oauth',
+        # authorize_params=None,
+        # api_base_url='https://graph.facebook.com/',
+        # client_kwargs={'scope': 'instagram_basic'},
+    )
+    return redirect(request_uri)
+ 
+@app.route('/facebook/auth')
+def facebook_auth():
+    fb_client = WebApplicationClient(os.environ.get('FACEBOOK_CLIENT_ID'))
+    token_endpoint = 'https://graph.facebook.com/oauth/access_token'
+    code = request.args.get("code")
+    
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+    
+    token_url, headers, body = fb_client.prepare_token_request(
+        token_endpoint,
+        authorization_response=request.url,
+        redirect_url=request.base_url,
+        code=code   
+    )
+    
+    # token = oauth.facebook.authorize_access_token()
+    # resp = oauth.facebook.get(
+    #     'https://graph.facebook.com/me/accounts')
+    # profile = resp.json()
+    print("Facebook User ", body)
+    return redirect('/')
 
 
 @app.route("/get_posts_data", methods=["GET"])
