@@ -11,7 +11,8 @@ import yaml
 from pydantic import BaseModel
 
 from app import LOG
-from .file_paths import template_path, predef_posts_file
+from app.models.posts import PostData
+from app.utils.file_paths import template_path
 
 
 POSTS_NUMBER = 5
@@ -121,13 +122,6 @@ def get_valid_posts(api_url: str, pre_posts_len: int, number_posts: int, posts_f
         return posts_list[:number_posts - pre_posts_len]
     else:
         return posts_list
-
-class PostData(BaseModel):
-    """Basic data retrieved from wordpress used in image"""
-    
-    title: str
-    link: str
-    cover: str
 
 
 def _get_post_cover(api_url: str) -> str:

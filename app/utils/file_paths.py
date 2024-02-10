@@ -1,8 +1,6 @@
 """Retrieve absolute paths to the files used among different modules"""
 
-import logging
 import os
-import sys
 from pathlib import Path
 
 from app import LOG
