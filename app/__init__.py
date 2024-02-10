@@ -38,3 +38,5 @@ app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
 from app import models
+
+from app.routes import auth, main
