@@ -13,12 +13,8 @@ from pydantic import BaseModel
 from app import LOG
 from app.models.canvas import ImageElements
 from app.utils.canvas import create_canvas, merge_elements
-from app.utils.file_paths import clear_files
+from app.utils.file_paths import clear_files, project_folder
 from app.utils.stories_data import store_metadata
-
-
-SCRIPT_FOLDER = Path(__file__).parent
-PROJECT_FOLDER = SCRIPT_FOLDER.parent
         
 
 def create_stories(site: str, posts_elements: List[ImageElements]) -> List:
@@ -33,7 +29,7 @@ def create_stories(site: str, posts_elements: List[ImageElements]) -> List:
     metadata = []
     
     # Check if stories folder exists and create it if not
-    stories_dir = PROJECT_FOLDER / "stories"
+    stories_dir = project_folder() / "stories"
     if not stories_dir.exists():
         LOG.info(f"Creating folder -> {str(stories_dir)}")
         try:
@@ -79,7 +75,7 @@ def create_story(post_elements: ImageElements, site: str) -> Path:
     
     is_ok = True
     
-    stories_site_dir = PROJECT_FOLDER / "stories" / site
+    stories_site_dir = project_folder() / "stories" / site
     image_path = f"{stories_site_dir}/{post_elements.number}.png"
     
     # Create blank canvas as the base of the image

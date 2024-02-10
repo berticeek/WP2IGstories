@@ -2,16 +2,13 @@ import os
 from pathlib import Path
 
 from app import LOG
-
-
-SCRIPT_FOLDER = Path(__file__).parent
-PROJECT_FOLDER = SCRIPT_FOLDER.parent
+from app.utils.file_paths import project_folder
 
 
 def reorder_stories(metadata: list, site: str) -> list:
     """Fixes order of files and metadatas after story was deleted"""
     
-    stories_dir = PROJECT_FOLDER / "stories" / site
+    stories_dir = project_folder() / "stories" / site
     
     # Rename files to keep correct (ascending) order
     files = [x for x in os.listdir(stories_dir) if os.path.splitext(x)[1] == ".png"]

@@ -4,15 +4,13 @@ import sys
 from pathlib import Path
 
 from app import LOG
-
-SCRIPT_FOLDER = Path(__file__).parent
-PROJECT_FOLDER = SCRIPT_FOLDER.parent
+from app.utils.file_paths import project_folder
 
 
 def delete_story_file(metadata, site):
     """Deletes png file and all stored data related to the selected story"""
     
-    stories_dir = PROJECT_FOLDER / "stories" / site
+    stories_dir = project_folder() / "stories" / site
     file_path = stories_dir / (str(metadata["number"]) + ".png")
     
     # Check if file exist

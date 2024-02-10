@@ -15,9 +15,6 @@ from app.models.canvas import Canvas, ImageElements, Text
 
 Image.MAX_IMAGE_PIXELS = None
 
-SCRIPT_FOLDER = Path(__file__).parent
-PROJECT_FOLDER = SCRIPT_FOLDER.parent
-
 
 def create_canvas(canvas: Canvas) -> Image:
     """Create blank canvas Image object"""

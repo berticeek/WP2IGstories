@@ -6,31 +6,28 @@ from pathlib import Path
 from app import LOG
 
 
-SCRIPT_FOLDER = Path(__file__).parent
-PROJECT_FOLDER = SCRIPT_FOLDER.parent
-
-
 def project_folder() -> Path:
     """Project root path"""
-    return PROJECT_FOLDER
+    script_folder = Path(__file__).parent
+    return script_folder.parent.parent
 
 
 def template_path(site: str) -> str:
     """Path to stories template file"""
-    return PROJECT_FOLDER / "data" / site / "template.yaml"
+    return project_folder() / "data" / site / "template.yaml"
 
 
 def predef_posts_file(site: str) -> str:
     """Path to the file with predefined posts links"""
     # Probably not needed anymore, predefined posts are entered on the web
-    return PROJECT_FOLDER / "stories" / site / "stories.yaml"
+    return project_folder() / "stories" / site / "stories.yaml"
 
 
 def clear_files(site: str) -> None:
     """Remove created data"""
     
     ignore_files = ["metadata.yaml", "stories.yaml"]
-    output_folder = PROJECT_FOLDER / "stories" / site
+    output_folder = project_folder() / "stories" / site
     
     if not output_folder.exists():
         return None
