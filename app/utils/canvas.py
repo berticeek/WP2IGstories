@@ -10,16 +10,13 @@ from typing import List, Dict, Optional
 from PIL import Image, ImageDraw, ImageFont
 from pydantic import BaseModel
 
+from app import LOG
 from app.models.canvas import Canvas, ImageElements, Text
 
 Image.MAX_IMAGE_PIXELS = None
 
 SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent
-
-LOG = logging.getLogger(__name__)
-handler = logging.StreamHandler(sys.stdout)
-LOG.addHandler(handler)
 
 
 def create_canvas(canvas: Canvas) -> Image:

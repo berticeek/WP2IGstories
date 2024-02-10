@@ -10,6 +10,7 @@ from urllib.parse import quote
 from envyaml import EnvYAML
 from pydantic import BaseModel
 
+from app import LOG
 from .canvas import Canvas, ImageElements, Background, Text
 from .canvas import create_story
 from .file_paths import template_path, clear_files
@@ -19,9 +20,6 @@ from .get_posts_metadata import PostData
 SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent
 
-LOG = logging.getLogger(__name__)
-handler = logging.StreamHandler(sys.stdout)
-LOG.addHandler(handler)
 
 class Template(BaseModel):
     """Configuration of image - 

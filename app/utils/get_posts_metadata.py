@@ -10,11 +10,9 @@ from urllib.parse import urlparse
 import yaml
 from pydantic import BaseModel
 
+from app import LOG
 from .file_paths import template_path, predef_posts_file
 
-LOG = logging.getLogger(__name__)
-handler = logging.StreamHandler(sys.stdout)
-LOG.addHandler(handler)
 
 POSTS_NUMBER = 5
 

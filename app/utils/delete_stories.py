@@ -3,12 +3,10 @@ import os
 import sys
 from pathlib import Path
 
+from app import LOG
+
 SCRIPT_FOLDER = Path(__file__).parent
 PROJECT_FOLDER = SCRIPT_FOLDER.parent
-
-LOG = logging.getLogger(__name__)
-handler = logging.StreamHandler(sys.stdout)
-LOG.addHandler(handler)
 
 
 def delete_story_file(metadata, site):
