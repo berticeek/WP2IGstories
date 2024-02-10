@@ -2,8 +2,8 @@ import json
 from flask import jsonify, request
 
 from app import LOG, app
-from app.create_stories import Template, get_elements, get_story_template
-from app.get_posts_metadata import PostData, get_posts_metadata
+from app.utils.create_stories import Template, get_elements, get_story_template
+from app.utils.get_posts_metadata import PostData, get_posts_metadata
 
 
 @app.route("/get_posts_data", methods=["GET"])

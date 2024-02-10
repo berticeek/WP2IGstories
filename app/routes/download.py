@@ -4,7 +4,7 @@ import shutil
 from flask import jsonify, request, send_file
 
 from app import LOG, app
-from app.file_paths import project_folder
+from app.utils.file_paths import project_folder
 
 
 @app.route("/download_stories", methods=["GET"])

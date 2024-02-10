@@ -2,9 +2,9 @@ import json
 from flask import jsonify, request
 
 from app import LOG, app
-from app.create_stories import adjust_elements
+from app.utils.create_stories import adjust_elements
 
-from app.get_posts_metadata import modify_posts_metadata
+from app.utils.get_posts_metadata import modify_posts_metadata
 from app.models.canvas import ImageElements
 
 

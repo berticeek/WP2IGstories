@@ -4,7 +4,7 @@ from flask import jsonify, render_template, request
 from flask_mail import Message
 
 from app import LOG, app, mail
-from app.file_paths import project_folder
+from app.utils.file_paths import project_folder
 from app.utils.credentials import get_mail_credentials
 
 
