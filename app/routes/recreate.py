@@ -2,10 +2,9 @@ import json
 from flask import jsonify, request
 
 from app import LOG, app
-from app.utils.create_stories import adjust_elements
-
 from app.utils.get_posts_metadata import modify_posts_metadata
 from app.models.canvas import ImageElements
+from app.utils.stories_data import adjust_elements
 
 
 @app.route("/recreate_posts_metadata", methods=["POST"])

@@ -37,6 +37,6 @@ app.config['MAIL_USE_SSL'] = True
      
 mail = Mail(app)
 
-from app.models import canvas
+from app.models import canvas, posts, story
 
 from app.routes import auth, download, email, images, main, posts_data, recreate

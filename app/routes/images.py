@@ -2,9 +2,10 @@ from flask import jsonify, request, session, url_for
 from pydantic import ValidationError
 
 from app import LOG, app
-from app.utils.delete_stories import delete_story_file, reorder_stories
+from app.utils.create_stories import create_stories
+from app.utils.delete_stories import delete_story_file
 from app.models.canvas import ImageElements
-from app.utils import create_stories
+from app.utils.reorder_stories import reorder_stories
 
 
 @app.route("/create_images", methods=["POST"])
