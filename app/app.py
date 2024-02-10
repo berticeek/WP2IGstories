@@ -13,56 +13,18 @@ from pydantic import ValidationError
 from werkzeug.middleware.proxy_fix import ProxyFix
 from oauthlib.oauth2 import WebApplicationClient
 
+from app import LOG, app, mail
+from app.utils.credentials import get_mail_credentials
 from .create_stories import create_stories, get_story_template, get_elements, adjust_elements
 from .create_stories import Template, PostData, ImageElements
 from .delete_stories import delete_story_file, reorder_stories
 from .file_paths import project_folder
 from .get_posts_metadata import get_posts_metadata, modify_posts_metadata
 
-app = Flask(__name__)
-app.wsgi_app = ProxyFix(
-    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
-)
-app.secret_key = os.environ.get('FLASK_APP_SECRET', secrets.token_hex(16))
 
 FACEBOOK_CLIENT_ID = os.getenv("FACEBOOK_CLIENT_ID")
 FACEBOOK_CLIENT_SECRET = os.getenv("FACEBOOK_CLIENT_SECRET")
 
-script_dir = os.getcwd()
-app.config["UPLOAD_FOLDER"] = os.path.join(script_dir, "stories")
-
-logging.basicConfig(level=logging.INFO, filename=os.path.join(script_dir, "app.log"), filemode="w", format='%(name)s - %(asctime)s - %(levelname)s - %(message)s')
-LOG = logging.getLogger(__name__)
-handler = logging.StreamHandler(sys.stdout)
-LOG.addHandler(handler)
-
-def get_mail_credentials() -> dict:
-    """!Should be changed when deployed to use some other SMTP server!"""
-    
-    # with open(project_folder() / "email_conf.yaml", "r") as yamlf:
-        # credentials = yaml.safe_load(yamlf)
-    mail_address = os.getenv("WPIG_MAIL_ADDRESS")
-    mail_pass = os.getenv("WPIG_MAIL_PASSWORD")
-        
-    return({
-        "mail_addr": mail_address,
-        "mail_passwd": mail_pass,
-    })
-    
-    
-def url_decode(value):
-    return unquote(value)
-
-app.jinja_env.filters['url_decode'] = url_decode
-    
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = get_mail_credentials()["mail_addr"]
-app.config['MAIL_PASSWORD'] = get_mail_credentials()["mail_passwd"]
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-     
-mail = Mail(app)
 
 @app.route("/")
 def index():
