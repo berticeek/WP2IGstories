@@ -18,14 +18,29 @@ body button:hover {
   flex-direction: column;
 }
 
+#loginButton{
+  color: #979797;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background-color: inherit;
+  padding: 0px;
+}
+#loginButton:hover{
+  color: #333;
+}
+
 .header {
   padding-top: 20px;
-  margin-left: 100px;
+  left: 50%;
+  transform: translate(-50%, -0%);
   position: fixed;
-  width: 100%;
+  width: 80%;
 }
 .header li {
   list-style-type: none;
+}
+.header li .login_button {
+  text-align: right;
 }
 .header li a {
   color: #979797;

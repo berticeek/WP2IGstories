@@ -11,6 +11,11 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
    </head>
    <body>
+        <div class="header">
+            <li>
+                <ul class="login_button"><button type="button" id="loginButton" data-toggle="modal" data-target="#loginWindow">Sign In</button></ul>
+            </li>
+        </div>
         <div class="container cont-main-page">
             <h1>Storkoprístroj 3000</h1>
 
@@ -44,6 +49,7 @@
                 </form>
             <div>
             {% include 'loading_modal.html' %}
+            {% include 'login_modal.html' %}
         </div>
         
        <script src="../static/js/req_create_posts.js"></script>
