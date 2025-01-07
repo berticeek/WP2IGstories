@@ -107,10 +107,11 @@ def get_valid_posts(api_url: str, pre_posts_len: int, number_posts: int, posts_f
     posts_list = posts.get_latest_posts(posts_from)
     if not posts_list:
         LOG.error("Nepodarilo sa získať články")
+        return []
     
     # Filter out posts with unwanted tags
     for post in reversed(posts_list):
-        if exclude_tags == None:
+        if exclude_tags is None:
             break
         
         LOG.info(f"Filtering out posts with tags: {exclude_tags}")
@@ -203,7 +204,10 @@ def get_posts_metadata(site: str, links: List, number_posts: int, posts_from: st
      
     # Append data of remaining posts (either all posts or up to max number)
     posts = pre_posts + get_valid_posts(api_url, len(pre_posts), number_posts, posts_from)
-    posts_data = []  
+    if not posts:
+        raise LookupError("No posts found by given criteria")
+
+    posts_data = []
     
     # Get needed data from posts request responses 
     for post in posts:

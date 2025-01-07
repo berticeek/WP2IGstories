@@ -99,7 +99,13 @@ def get_posts_data():
         LOG.error("Missing 'from_date' in the request.")
         return jsonify({"success": False, "error": "Missing 'from_date' in the request."}), 400
     
-    posts_data = get_posts_metadata(site, links, int(posts_number), posts_from)
+    try:
+        posts_data = get_posts_metadata(site, links, int(posts_number), posts_from)
+    except ValueError as err:
+        return jsonify({"success": False, "error": str(err)}), 500
+    except LookupError as err:
+        return jsonify({"success": False, "error": str(err)}), 500
+
     return jsonify({"success": True, "data": posts_data})
 
 
